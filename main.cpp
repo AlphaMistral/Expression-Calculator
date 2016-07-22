@@ -21,9 +21,15 @@ using namespace std;
 int main ()
 {
     cout << "Hello World!" << endl;
-    Expression *expr = new Expression ("-5 / 17 * (-109)");
+    Expression *expr = new Expression ("sin(9)");
     ExpressionParser *parser = new ExpressionParser (expr);
+    parser->SetVariable ("x", 5);
+    parser->SetVariable ("t", 4);
     parser->ParseExpression ();
+    CalculationResult *res1 = parser->GetResult ();
+    res1->OutputResult ();
+    res1->SetResult(14161231);
+    res1->OutputResult ();
     parser->GetResult ()->OutputResult ();
     return 0;
 }

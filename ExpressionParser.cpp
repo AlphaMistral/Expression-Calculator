@@ -37,13 +37,13 @@ double ExpressionParser :: GetValue (int l, int r)
     double ans = 0;
     pair < int, int > operate = make_pair (INT_MAX, INT_MAX);
     int index = l;
-    while (index < r - l + 1)
+    while (index < r)
     {
         index = GetChildExpressionPos (index);
         if (index == p_expr_size - 1)
             break;
         int oprf = OperatorReflection(parsedExpr[++index]);
-        if (index >= r - l + 1) break;
+        if (index >= r) break;
         pair < int, int > tempOperate = make_pair (oprf, index);
         operate = min (operate, tempOperate);
         index++;
@@ -135,6 +135,13 @@ double ExpressionParser :: GetSingleValue (int l, int r)
             ans = acos (-1.0);
         else if (varName == "e")
             ans = 2.71828;
+        else
+        {
+            if (var_dic[varName])
+            {
+                ans = var_dic[varName];
+            }
+        }
     }
     return sign * ans;
 }
@@ -275,5 +282,22 @@ void ExpressionParser :: ParseExpression ()
 
 CalculationResult *ExpressionParser :: GetResult ()
 {
-    return result;
+    CalculationResult *ret = new CalculationResult (*result);
+    return ret;
+}
+
+CalculationResult *ExpressionParser :: SetVariable(string varName, double value)
+{
+    CalculationResult *ret = new CalculationResult ();
+    if (var_dic[varName])
+    {
+        var_dic[varName] = value;
+        ret->SetAllParams(1.0, true, "Altered!");
+    }
+    else
+    {
+        var_dic[varName] = value;
+        ret->SetAllParams(1.0, true, "Added!");
+    }
+    return ret;
 }

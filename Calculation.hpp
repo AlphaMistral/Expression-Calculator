@@ -32,6 +32,7 @@ class CalculationResult
     //Constructors
     CalculationResult ();
     CalculationResult (double, bool, string);
+    CalculationResult (CalculationResult &);
     
     void SetAllParams (double, bool, string);
     

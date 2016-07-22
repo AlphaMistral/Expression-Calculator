@@ -22,6 +22,13 @@ CalculationResult :: CalculationResult (double r, bool v, string s)
     statusInformation = s;
 }
 
+CalculationResult :: CalculationResult (CalculationResult &calc)
+{
+    result = calc.result;
+    isValid = calc.isValid;
+    statusInformation = calc.statusInformation;
+}
+
 void CalculationResult :: SetAllParams (double r, bool v, string s)
 {
     result = r;
