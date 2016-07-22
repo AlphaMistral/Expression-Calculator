@@ -14,10 +14,16 @@
 #include <algorithm>
 #include <vector>
 
+#include "ExpressionParser.hpp"
+
 using namespace std;
 
 int main ()
 {
     cout << "Hello World!" << endl;
+    Expression *expr = new Expression ("-5 / 17 * (-109)");
+    ExpressionParser *parser = new ExpressionParser (expr);
+    parser->ParseExpression ();
+    parser->GetResult ()->OutputResult ();
     return 0;
 }

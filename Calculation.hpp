@@ -39,6 +39,7 @@ class CalculationResult
     void SetResult (double);
     void SetValidity (bool);
     void SetInformation (string);
+    void AttachInformation (string);
     
     double GetResult ();
     bool GetValidity ();

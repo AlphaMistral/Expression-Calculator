@@ -40,5 +40,7 @@ class Expression
     void SetToNewExpression (string);
     bool IsValid ();
     void SetStatus (ExpressionStatus);
+    
+    string GetExpression ();
 };
 #endif /* Expression_hpp */

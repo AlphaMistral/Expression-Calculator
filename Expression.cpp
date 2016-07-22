@@ -38,3 +38,8 @@ void Expression :: SetStatus(ExpressionStatus stat)
 {
     status = stat;
 }
+
+string Expression :: GetExpression ()
+{
+    return expr;
+}
