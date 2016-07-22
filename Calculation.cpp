@@ -58,3 +58,14 @@ string CalculationResult :: GetInformation ()
 {
     return statusInformation;
 }
+
+void CalculationResult :: OutputResult ()
+{
+    cerr << endl << "******The Output Result for the indicated operation is as follows******" << endl;
+    cerr << "The numerical result is: " << result << endl;
+    cerr << "The result is ";
+    if (!isValid) cerr << "in";
+    cerr << "valid." << endl;
+    cerr << "The Status Information is: " << statusInformation << endl;
+    cerr << "******This is the end of the result of the indicated operation******" << endl << endl;
+}

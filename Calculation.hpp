@@ -29,6 +29,7 @@ class CalculationResult
     
     public :
     
+    //Constructors
     CalculationResult ();
     CalculationResult (double, bool, string);
     
@@ -42,5 +43,8 @@ class CalculationResult
     double GetResult ();
     bool GetValidity ();
     string GetInformation ();
+    
+    //Debugging Functions
+    void OutputResult ();
 };
 #endif /* Calculation_hpp */
