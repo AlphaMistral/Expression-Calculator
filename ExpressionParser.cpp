@@ -152,42 +152,55 @@ double ExpressionParser :: GetFuncValue(string funcName, int l, int r)
     int index = l;
     double sign = ((parsedExpr[index] == '-') ? -1 : 1);
     if (sign < 0)index++;
-    double operatingNum = GetValue (l, r);
     if (funcName == "sin")
     {
+        double operatingNum = GetValue (l, r);
         ans = sin (operatingNum);
     }
     else if (funcName == "cos")
     {
+        double operatingNum = GetValue (l, r);
         ans = cos (operatingNum);
     }
     else if (funcName == "tan")
     {
+        double operatingNum = GetValue (l, r);
         ans = tan (operatingNum);
     }
     else if (funcName == "cot")
     {
+        double operatingNum = GetValue (l, r);
         ans = 1.0 / tan (operatingNum);
     }
     else if (funcName == "arcsin")
     {
+        double operatingNum = GetValue (l, r);
         ans = asin(operatingNum);
     }
     else if (funcName == "arccos")
     {
+        double operatingNum = GetValue (l, r);
         ans = acos(operatingNum);
     }
     else if (funcName == "arctan")
     {
+        double operatingNum = GetValue (l, r);
         ans = atan(operatingNum);
     }
     else if (funcName == "arccot")
     {
+        double operatingNum = GetValue (l, r);
         ans = atan(1.0 / operatingNum);
     }
     else if (funcName == "abs")
     {
+        double operatingNum = GetValue (l, r);
         ans = abs (operatingNum);
+    }
+    else if (funcName == "max")
+    {
+        vector < pair < int, int > > *params = GetParameters(l, r);
+        return max (GetValue ((*params)[0].first, (*params)[0].second), GetValue ((*params)[1].first, (*params)[1].second));
     }
     else ans = 0;
     return ans;
@@ -298,6 +311,27 @@ CalculationResult *ExpressionParser :: SetVariable(string varName, double value)
     {
         var_dic[varName] = value;
         ret->SetAllParams(1.0, true, "Added!");
+    }
+    return ret;
+}
+
+vector< pair < int, int > > *ExpressionParser :: GetParameters (int l, int r)
+{
+    vector< pair < int, int > > *ret = new vector < pair < int, int > > ();
+    int ll = l, rr = r;
+    int lindex = ll, rindex = ll;
+    while (rindex <= rr)
+    {
+        if (parsedExpr[rindex] == ',')
+        {
+            ret->push_back (make_pair (lindex, rindex - 1));
+            lindex = rindex + 1;
+            if (lindex > rr)
+                break;
+        }
+        if (rindex == rr)
+            ret->push_back(make_pair (lindex, rindex));
+        rindex++;
     }
     return ret;
 }

@@ -21,7 +21,7 @@ using namespace std;
 int main ()
 {
     cout << "Hello World!" << endl;
-    Expression *expr = new Expression ("sin(9)");
+    Expression *expr = new Expression ("max(2,8)");
     ExpressionParser *parser = new ExpressionParser (expr);
     parser->SetVariable ("x", 5);
     parser->SetVariable ("t", 4);
