@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <vector>
+#include <sqlite3.h>
 
 #include "ExpressionParser.hpp"
 
@@ -20,6 +21,7 @@ using namespace std;
 
 int main ()
 {
+    cout << sqlite3_version << endl;
     cout << "Hello World!" << endl;
     Expression *expr = new Expression ("max(2,8)");
     ExpressionParser *parser = new ExpressionParser (expr);

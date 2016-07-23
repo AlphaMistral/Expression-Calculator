@@ -66,6 +66,11 @@ string CalculationResult :: GetInformation ()
     return statusInformation;
 }
 
+void CalculationResult :: AttachInformation (string s)
+{
+    statusInformation += s;
+}
+
 void CalculationResult :: OutputResult ()
 {
     cerr << endl << "******The Output Result for the indicated operation is as follows******" << endl;

@@ -335,3 +335,40 @@ vector< pair < int, int > > *ExpressionParser :: GetParameters (int l, int r)
     }
     return ret;
 }
+
+void ExpressionParser :: CheckExpression ()
+{
+    bool isErrorDeteced = false;
+    result->SetAllParams (1.0, true, "");
+    if (originalExpr == NULL || p_expr_size == 0)
+    {
+        isErrorDeteced = true;
+        result->SetAllParams(0.0, false, "The expression doesn't exist or is empty. Pleaes check your input!");
+        return;
+    }
+    for (string :: iterator iter = parsedExpr.begin ();iter != parsedExpr.end ();iter++)
+    {
+        char c = *iter;
+        if (!isdigit (c) && !isalpha (c))
+        {
+            if (c != '(' && c != ')')
+            {
+                if (OperatorReflection (c) == NONEXIST)
+                {
+                    int pos = (int)(iter - parsedExpr.begin ()) + 1;
+                    isErrorDeteced = true;
+                    result->AttachInformation (string ("Invalid character \'") + c + "\' is detected at the" + to_string (pos) + "one.");
+                }
+            }
+        }
+    }
+    if (!isErrorDeteced)
+    {
+        result->SetAllParams(1.0, true, "The expression is valid. However the variables have not been checked yet.");
+    }
+    else
+    {
+        result->SetResult (0.0);
+        result->SetValidity (false);
+    }
+}

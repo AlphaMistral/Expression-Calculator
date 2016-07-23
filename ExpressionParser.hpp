@@ -54,6 +54,8 @@ class ExpressionParser
     double GetFuncValue (string, int, int);
     double GetThreeItemOperationValue (int, double, double);
     
+    void CheckExpression ();
+    
     vector< pair < int, int > > *GetParameters (int, int);
     int GetChildExpressionPos (int);
     int OperatorReflection (char);
