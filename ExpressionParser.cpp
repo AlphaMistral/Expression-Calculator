@@ -14,6 +14,7 @@ ExpressionParser :: ExpressionParser ()
     parsedExpr = "";
     p_expr_size = 0;
     var_dic.clear ();
+    func_dic.clear ();
     result = NULL;
 }
 
@@ -29,6 +30,7 @@ ExpressionParser :: ExpressionParser (Expression *e)
     }
     p_expr_size = (int)parsedExpr.size ();
     var_dic.clear ();
+    func_dic.clear ();
     result = new CalculationResult ();
 }
 
@@ -202,7 +204,34 @@ double ExpressionParser :: GetFuncValue(string funcName, int l, int r)
         vector < pair < int, int > > *params = GetParameters(l, r);
         return max (GetValue ((*params)[0].first, (*params)[0].second), GetValue ((*params)[1].first, (*params)[1].second));
     }
-    else ans = 0;
+    else ans = GetUserDefinedFuncValue (funcName, l, r);
+    return ans;
+}
+
+double ExpressionParser :: GetUserDefinedFuncValue (string funcName, int l, int r)
+{
+    double ans = 0;
+    Function *function = func_dic[funcName];
+    string expr = function->GetExpression ();
+    vector < pair < int, int > > *params = GetParameters (l, r);
+    vector < double > *values = new vector < double > ();
+    for (vector < pair < int, int > > :: iterator iter = params->begin (); iter != params->end ();iter++)
+    {
+        pair < int, int> p = *iter;
+        values->push_back(GetValue(p.first, p.second));
+    }
+    Expression *expression = new Expression (expr);
+    ExpressionParser *newParser = new ExpressionParser (expression);
+    string currentVar = "";
+    for (vector < double > :: iterator iter = values->begin ();iter != values->end ();iter++)
+    {
+        double v = *iter;
+        currentVar += "x";
+        newParser->SetVariable(currentVar, v);
+    }
+    newParser->ParseExpression ();
+    CalculationResult *tempAns = newParser->GetResult ();
+    ans = tempAns->GetResult ();
     return ans;
 }
 
@@ -362,6 +391,13 @@ void ExpressionParser :: CheckExpression ()
             }
         }
     }
+    if (isErrorDeteced)
+    {
+        result->SetResult (0.0);
+        result->SetValidity (false);
+        return;
+    }
+    CheckExpression(0, p_expr_size - 1);
     if (!isErrorDeteced)
     {
         result->SetAllParams(1.0, true, "The expression is valid. However the variables have not been checked yet.");
@@ -371,4 +407,40 @@ void ExpressionParser :: CheckExpression ()
         result->SetResult (0.0);
         result->SetValidity (false);
     }
+}
+
+void ExpressionParser :: CheckExpression(int l, int r)
+{
+    
+}
+
+CalculationResult *ExpressionParser :: AddNewFunction (string name, int num, string expr)
+{
+    CalculationResult *ret = new CalculationResult ();
+    if (func_dic[name] != NULL)
+    {
+        ret->SetAllParams(0.0, false, "The function has already been defined!");
+    }
+    else
+    {
+        Function *newFunc = new Function (name, num, expr);
+        func_dic[name] = newFunc;
+        ret->SetAllParams(1.0, true, "The function has been inserted into the parser!");
+    }
+    return ret;
+}
+
+CalculationResult *ExpressionParser :: DeleteFunction (string name)
+{
+    CalculationResult *ret = new CalculationResult ();
+    if (func_dic[name] == NULL)
+    {
+        ret->SetAllParams(0.0, false, "The indicated function does not exist at all.");
+    }
+    else
+    {
+        func_dic[name] = NULL;
+        ret->SetAllParams(1.0, true, "The indicated function has been removed from the parser!");
+    }
+    return ret;
 }

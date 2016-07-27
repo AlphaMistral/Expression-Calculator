@@ -23,6 +23,8 @@
 #include <climits>
 
 #include "Expression.hpp"
+#include "Function.hpp"
+
 using namespace std;
 
 class ExpressionParser
@@ -47,14 +49,19 @@ class ExpressionParser
     string parsedExpr;
     int p_expr_size;
     map < string, double > var_dic;
+    map < string, Function * > func_dic;
     CalculationResult *result;
     
     double GetValue (int, int);
     double GetSingleValue (int, int);
     double GetFuncValue (string, int, int);
     double GetThreeItemOperationValue (int, double, double);
+    double GetUserDefinedFuncValue (string, int, int);
     
     void CheckExpression ();
+    void CheckExpression (int, int);
+    void CheckSingleExpression (int, int);
+    void CheckFuncExpression (int, int);
     
     vector< pair < int, int > > *GetParameters (int, int);
     int GetChildExpressionPos (int);
@@ -73,5 +80,9 @@ class ExpressionParser
     
     CalculationResult *SetVariable (string, double);
     CalculationResult *DeleteVariable (string);
+    //CalculationResult *CheckExpression ();
+    CalculationResult *CheckExpression (string);
+    CalculationResult *AddNewFunction (string, int, string);
+    CalculationResult *DeleteFunction (string);
 };
 #endif /* ExpressionParser_hpp */
