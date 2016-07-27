@@ -222,6 +222,7 @@ double ExpressionParser :: GetUserDefinedFuncValue (string funcName, int l, int 
     }
     Expression *expression = new Expression (expr);
     ExpressionParser *newParser = new ExpressionParser (expression);
+    newParser->InitializeFunctionLib (&func_dic);
     string currentVar = "";
     for (vector < double > :: iterator iter = values->begin ();iter != values->end ();iter++)
     {
@@ -443,4 +444,9 @@ CalculationResult *ExpressionParser :: DeleteFunction (string name)
         ret->SetAllParams(1.0, true, "The indicated function has been removed from the parser!");
     }
     return ret;
+}
+
+void ExpressionParser :: InitializeFunctionLib (map<string, Function *> *lib)
+{
+    func_dic = *lib;
 }

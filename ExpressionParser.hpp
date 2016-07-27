@@ -84,5 +84,7 @@ class ExpressionParser
     CalculationResult *CheckExpression (string);
     CalculationResult *AddNewFunction (string, int, string);
     CalculationResult *DeleteFunction (string);
+    
+    void InitializeFunctionLib (map < string, Function * > *);
 };
 #endif /* ExpressionParser_hpp */
