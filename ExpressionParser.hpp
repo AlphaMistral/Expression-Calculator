@@ -58,14 +58,13 @@ class ExpressionParser
     double GetThreeItemOperationValue (int, double, double);
     double GetUserDefinedFuncValue (string, int, int);
     
-    void CheckExpression ();
-    void CheckExpression (int, int);
-    void CheckSingleExpression (int, int);
-    void CheckFuncExpression (int, int);
-    
     vector< pair < int, int > > *GetParameters (int, int);
     int GetChildExpressionPos (int);
     int OperatorReflection (char);
+    
+    void CheckSingleExpression (CalculationResult *, int, int);
+    void CheckFunctionExpression (CalculationResult *, string, int, int);
+    void CheckThreeItemExpression (CalculationResult *, int, int);
     
     public :
     
@@ -80,10 +79,10 @@ class ExpressionParser
     
     CalculationResult *SetVariable (string, double);
     CalculationResult *DeleteVariable (string);
-    //CalculationResult *CheckExpression ();
-    CalculationResult *CheckExpression (string);
     CalculationResult *AddNewFunction (string, int, string);
     CalculationResult *DeleteFunction (string);
+    
+    CalculationResult *CheckExpression ();
     
     void InitializeFunctionLib (map < string, Function * > *);
 };
