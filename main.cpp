@@ -35,7 +35,7 @@ int main ()
     res1->SetResult(14161231);
     res1->OutputResult ();
     parser->GetResult ()->OutputResult ();
-    expr->SetToNewExpression("3*3)");
+    expr->SetToNewExpression("7.xx+512*sin(11).14)");
     ExpressionParser *newParser = new ExpressionParser (expr);
     newParser->AddNewFunction("fx", 2, "a + b");
     CalculationResult *res2 = newParser->CheckExpression ();
