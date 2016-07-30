@@ -79,7 +79,7 @@ class ExpressionParser
     
     CalculationResult *SetVariable (string, double);
     CalculationResult *DeleteVariable (string);
-    CalculationResult *AddNewFunction (string, int, string);
+    CalculationResult *AddNewFunction (Function *);
     CalculationResult *DeleteFunction (string);
     
     CalculationResult *CheckExpression ();
