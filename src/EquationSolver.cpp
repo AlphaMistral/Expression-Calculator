@@ -9,6 +9,7 @@
 #include "EquationSolver.hpp"
 
 int EquationSolver :: MAX_ITER_TIMES = 500;
+double EquationSolver :: EPS = 1e-5;
 
 void EquationSolver :: SetMaxIterTimes (int times)
 {
@@ -149,9 +150,10 @@ CalculationResult *EquationSolver :: SolveBySecant (double p1, double p2)
         double t1 = parser->ParseExpression ()->GetResult ();
         parser->SetVariable (var_name, last2);
         double t2 = parser->ParseExpression ()->GetResult ();
-        double current = last2 - (last2 - last2) / (t2 - t1) * t2;
+        double current = last2 - (last2 - last1) / (t2 - t1) * t2;
         if (abs (current - last2) <= EPS)
         {
+            last2 = current;
             isMaxIterReached = false;
             break;
         }

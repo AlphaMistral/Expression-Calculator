@@ -41,7 +41,7 @@ class EquationSolver
     
     static int MAX_ITER_TIMES;
     
-    double EPS = 1e-7;
+    static double EPS;
     
     public :
     

@@ -50,7 +50,9 @@ int main ()
     Expression *xxExpression = new Expression ("1 + 17 * cos (17 * x + 4)");
     CalculationResult *nRes = solver->SolveByNewton (xxExpression, 0.8);
     cout << nRes->GetResult () << endl;
-    xParser->SetVariable("x", 0.817233);
+    xParser->SetVariable("x", 0.126825);
     cout << xParser->ParseExpression ()->GetResult () << endl;
+    CalculationResult *sRes = solver->SolveBySecant (0.8, 0.801);
+    cout << sRes->GetResult () << endl;
     return 0;
 }
