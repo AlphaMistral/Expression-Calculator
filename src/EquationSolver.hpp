@@ -39,18 +39,25 @@ class EquationSolver
     string var_name;
     ExpressionParser *parser;
     
-    double EPS = 1e-5;
+    static int MAX_ITER_TIMES;
+    
+    double EPS = 1e-7;
     
     public :
     
     EquationSolver ();
     EquationSolver (Expression *, ExpressionParser *, string);
     CalculationResult *SolveByBinarySearch (double, double);
+    CalculationResult *SolveByNewton (Expression *, double);
+    CalculationResult *SolveBySecant (double, double);
     ExpressionParser *GetParser ();
     
     CalculationResult *SetParser (ExpressionParser *);
     void SetVarName (string);
     CalculationResult *SetExpression (Expression *);
     void SetEPS (double);
+    
+    static void SetMaxIterTimes (int);
 };
+
 #endif /* EquationSolver_hpp */

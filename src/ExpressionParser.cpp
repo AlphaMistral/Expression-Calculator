@@ -338,6 +338,31 @@ CalculationResult *ExpressionParser :: ParseExpression ()
     return new CalculationResult (*result);
 }
 
+CalculationResult *ExpressionParser :: ParseExpression (Expression *expr)
+{
+    Expression *oldExpr = originalExpr;
+    int oldSize = p_expr_size;
+    string oldPExpr = parsedExpr;
+    CalculationResult *oldResult = new CalculationResult (*result);
+    originalExpr = expr;
+    parsedExpr = "";
+    string temp_e = expr->GetExpression ();
+    for (string :: iterator iter = temp_e.begin ();iter != temp_e.end ();iter++)
+    {
+        if (*iter != ' ')
+            parsedExpr += *iter;
+    }
+    p_expr_size = (int)parsedExpr.size ();
+    ParseExpression ();
+    CalculationResult *ret = new CalculationResult (*result);
+    originalExpr = oldExpr;
+    p_expr_size = oldSize;
+    parsedExpr = oldPExpr;
+    result = oldResult;
+    return ret;
+
+}
+
 CalculationResult *ExpressionParser :: GetResult ()
 {
     CalculationResult *ret = new CalculationResult (*result);
@@ -622,7 +647,7 @@ CalculationResult *ExpressionParser :: CheckExpression (Expression *expr)
     Expression *oldExpr = originalExpr;
     int oldSize = p_expr_size;
     string oldPExpr = parsedExpr;
-    CalculationResult *oldResut = new CalculationResult (*result);
+    CalculationResult *oldResult = new CalculationResult (*result);
     originalExpr = expr;
     parsedExpr = "";
     string temp_e = expr->GetExpression ();
@@ -633,10 +658,11 @@ CalculationResult *ExpressionParser :: CheckExpression (Expression *expr)
     }
     p_expr_size = (int)parsedExpr.size ();
     CheckExpression ();
-    CalculationResult *ret = result;
+    CalculationResult *ret = new CalculationResult (*result);
     originalExpr = oldExpr;
     p_expr_size = oldSize;
     parsedExpr = oldPExpr;
+    result = oldResult;
     return ret;
 }
 

@@ -8,6 +8,13 @@
 
 #include "EquationSolver.hpp"
 
+int EquationSolver :: MAX_ITER_TIMES = 500;
+
+void EquationSolver :: SetMaxIterTimes (int times)
+{
+    MAX_ITER_TIMES = times;
+}
+
 bool dcmp (double a, double b, double EPS = 1e-5)
 {
     return abs (a - b) <= EPS;
@@ -102,5 +109,57 @@ CalculationResult *EquationSolver :: SolveByBinarySearch (double l,  double r)
         }
     }
     ret->SetAllParams(mid, true, "A solution is found in the interval. However it may not be the only solution to the equation. \n");
+    return ret;
+}
+
+CalculationResult *EquationSolver :: SolveByNewton(Expression *expr, double prediction = 0)
+{
+    CalculationResult *ret = new CalculationResult ();
+    double last = prediction;
+    bool isMaxIterReached = true;
+    for (int iter = 0;iter < MAX_ITER_TIMES;iter++)
+    {
+        parser->SetVariable (var_name, last);
+        double current = parser->ParseExpression (expression)->GetResult ();
+        current /= parser->ParseExpression (expr)->GetResult ();
+        current = -current + last;
+        if (abs (last - current) < EPS)
+        {
+            isMaxIterReached = false;
+            last = current;
+            break;
+        }
+        last = current;
+    }
+    if (isMaxIterReached)
+        ret->SetAllParams(last, true, "The answer may not be accurate because the max iteration time is reached and the itertaion is broken in the middle way. \n");
+    else ret->SetAllParams(last, true, "The answer has reached the indicated accuracy. \n");
+    return ret;
+}
+
+CalculationResult *EquationSolver :: SolveBySecant (double p1, double p2)
+{
+    CalculationResult *ret = new CalculationResult ();
+    double last1 = p1;
+    double last2 = p2;
+    bool isMaxIterReached = true;
+    for (int iter = 0;iter < MAX_ITER_TIMES;iter++)
+    {
+        parser->SetVariable (var_name, last1);
+        double t1 = parser->ParseExpression ()->GetResult ();
+        parser->SetVariable (var_name, last2);
+        double t2 = parser->ParseExpression ()->GetResult ();
+        double current = last2 - (last2 - last2) / (t2 - t1) * t2;
+        if (abs (current - last2) <= EPS)
+        {
+            isMaxIterReached = false;
+            break;
+        }
+        last1 = last2;
+        last2 = current;
+    }
+    if (isMaxIterReached)
+        ret->SetAllParams(last2, true, "The answer may not be accurate because the max iteration time is reached and the itertaion is broken in the middle way. \n");
+    else ret->SetAllParams(last2, true, "The answer has reached the indicated accuracy. \n");
     return ret;
 }
