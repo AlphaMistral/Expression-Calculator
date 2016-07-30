@@ -18,6 +18,8 @@
 #include <cmath>
 #include <algorithm>
 
+#include "Expression.hpp"
+
 using namespace std;
 
 class Function
@@ -26,19 +28,19 @@ class Function
     
     string name_func;
     int num_func;
-    string expr_func;
+    Expression *expr_func;
     
     public :
     
     Function ();
-    Function (string, int, string);
+    Function (string, int, Expression *);
     
     void SetName (string);
     void SetNum (int);
-    void SetExpression (string);
+    void SetExpression (Expression *);
     
     string GetName ();
-    string GetExpression ();
+    Expression *GetExpression ();
     int GetVarNum ();
 };
 #endif /* Function_hpp */

@@ -212,7 +212,7 @@ double ExpressionParser :: GetUserDefinedFuncValue (string funcName, int l, int 
 {
     double ans = 0;
     Function *function = func_dic[funcName];
-    string expr = function->GetExpression ();
+    Expression *expr = function->GetExpression ();
     vector < pair < int, int > > *params = GetParameters (l, r);
     vector < double > *values = new vector < double > ();
     for (vector < pair < int, int > > :: iterator iter = params->begin (); iter != params->end ();iter++)
@@ -220,8 +220,7 @@ double ExpressionParser :: GetUserDefinedFuncValue (string funcName, int l, int 
         pair < int, int> p = *iter;
         values->push_back(GetValue(p.first, p.second));
     }
-    Expression *expression = new Expression (expr);
-    ExpressionParser *newParser = new ExpressionParser (expression);
+    ExpressionParser *newParser = new ExpressionParser (expr);
     newParser->InitializeFunctionLib (&func_dic);
     char c = 'a' - 1;
     for (vector < double > :: iterator iter = values->begin ();iter != values->end ();iter++)
@@ -376,17 +375,16 @@ vector< pair < int, int > > *ExpressionParser :: GetParameters (int l, int r)
     return ret;
 }
 
-CalculationResult *ExpressionParser :: AddNewFunction (string name, int num, string expr)
+CalculationResult *ExpressionParser :: AddNewFunction (Function *func)
 {
     CalculationResult *ret = new CalculationResult ();
-    if (func_dic[name] != NULL)
+    if (func_dic[func->GetName ()] != NULL)
     {
         ret->SetAllParams(0.0, false, "The function has already been defined! \n");
     }
     else
     {
-        Function *newFunc = new Function (name, num, expr);
-        func_dic[name] = newFunc;
+        func_dic[func->GetName ()] = func;
         ret->SetAllParams(1.0, true, "The function has been inserted into the parser! \n");
     }
     return ret;
@@ -514,9 +512,24 @@ void ExpressionParser :: CheckThreeItemExpression (CalculationResult *ret, int l
 
 void ExpressionParser :: CheckFunctionExpression (CalculationResult *ret, string funcName, int l, int r)
 {
-    if (funcName == "sin" || funcName == "cos" || funcName == "arcsin" || funcName == "arccos" || funcName == "tan" || funcName == "cot" || funcName == "arctan" || funcName == "arccot" || funcName == "abs" || funcName == "max")
+    if (funcName == "sin" || funcName == "cos" || funcName == "arcsin" || funcName == "arccos" || funcName == "tan" || funcName == "cot" || funcName == "arctan" || funcName == "arccot" || funcName == "abs")
     {
         CheckThreeItemExpression(ret, l, r);
+        return;
+    }
+    else if (funcName == "max")
+    {
+        vector < pair < int, int > > *params = GetParameters (l + 1, r - 1);
+        if (params->size () != 2)
+        {
+            ret->AttachInformation ("Function \'" + string("max") + "\' Requires" + to_string (2) + " Parameter(s), while " + to_string (params->size ()) + " Provided. \n");
+            return;
+        }
+        for (vector < pair < int, int > > :: iterator iter = params->begin ();iter != params->end ();iter++)
+        {
+            pair < int, int > interval = *iter;
+            CheckThreeItemExpression (ret, interval.first, interval.second);
+        }
         return;
     }
     if (func_dic[funcName] == NULL)

@@ -10,19 +10,19 @@
 
 Function :: Function ()
 {
-    expr_func = "";
+    expr_func = NULL;
     name_func = "";
     num_func = 0;
 }
 
-Function :: Function (string name, int num, string expr)
+Function :: Function (string name, int num, Expression *expr)
 {
     expr_func = expr;
     name_func = name;
     num_func = num;
 }
 
-void Function :: SetExpression (string expr)
+void Function :: SetExpression (Expression *expr)
 {
     expr_func = expr;
 }
@@ -42,7 +42,7 @@ string Function :: GetName ()
     return name_func;
 }
 
-string Function :: GetExpression ()
+Expression *Function :: GetExpression ()
 {
     return expr_func;
 }
