@@ -231,6 +231,7 @@ double ExpressionParser :: GetUserDefinedFuncValue (string funcName, int l, int 
     newParser->ParseExpression ();
     CalculationResult *tempAns = newParser->GetResult ();
     ans = tempAns->GetResult ();
+    delete values;
     return ans;
 }
 
@@ -358,7 +359,8 @@ CalculationResult *ExpressionParser :: ParseExpression (Expression *expr)
     originalExpr = oldExpr;
     p_expr_size = oldSize;
     parsedExpr = oldPExpr;
-    result = oldResult;
+    result->SetAllParams (oldResult->GetResult (), oldResult->GetValidity (), oldResult->GetInformation ());
+    delete oldResult;
     return ret;
 
 }
@@ -372,7 +374,7 @@ CalculationResult *ExpressionParser :: GetResult ()
 CalculationResult *ExpressionParser :: SetVariable(string varName, double value)
 {
     CalculationResult *ret = new CalculationResult ();
-    if (var_dic[varName])
+    if (var_dic.find (varName) != var_dic.end ())
     {
         var_dic[varName] = value;
         ret->SetAllParams(1.0, true, "Altered! \n");
@@ -692,7 +694,9 @@ CalculationResult *ExpressionParser :: CheckFunctionValidity (Function *func)
     {
         newParser->SetVariable(string (1, ++c), 1.0);
     }
-    return newParser->CheckExpression ();
+    CalculationResult *ret = new CalculationResult (*(newParser->CheckExpression ()));
+    delete newParser;
+    return ret;
 }
 
 vector <Function *> ExpressionParser :: GetFunctionList ()
