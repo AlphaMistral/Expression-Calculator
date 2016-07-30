@@ -76,8 +76,8 @@ class ExpressionParser
     ExpressionParser (Expression *);
     
     //Member Methods
-    void ParseExpression ();
-    void ParseExpression (Expression *);
+    CalculationResult *ParseExpression ();
+    CalculationResult *ParseExpression (Expression *);
     CalculationResult *GetResult ();
     
     CalculationResult *SetVariable (string, double);
@@ -87,9 +87,11 @@ class ExpressionParser
     CalculationResult *DeleteFunction (string);
     
     CalculationResult *CheckExpression ();
-    
+    CalculationResult *CheckExpression (Expression *);
     void InitializeFunctionLib (map < string, Function * > *);
     
     vector <Function *> GetFunctionList ();
+    
+    CalculationResult *SetToNewExpression (Expression *expr);
 };
 #endif /* ExpressionParser_hpp */

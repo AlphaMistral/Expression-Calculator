@@ -16,6 +16,7 @@
 #include <sqlite3.h>
 
 #include "../src/ExpressionParser.hpp"
+#include "../src/EquationSolver.hpp"
 
 using namespace std;
 
@@ -40,5 +41,11 @@ int main ()
     cout << check->GetInformation () << endl;
     CalculationResult *res2 = newParser->CheckExpression ();
     cout << res2->GetInformation () << endl;
+    
+    Expression *xExpression = new Expression ("x + sin (8 ^ 2 - cos (8 * x))");
+    ExpressionParser *xParser = new ExpressionParser (xExpression);
+    EquationSolver *solver = new EquationSolver (xExpression, xParser, "x");
+    CalculationResult *xRes = solver->SolveByBinarySearch (-200, 200);
+    cout << xRes->GetResult () << endl;
     return 0;
 }
