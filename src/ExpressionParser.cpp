@@ -248,6 +248,11 @@ double ExpressionParser :: GetThreeItemOperationValue(int op, double l, double r
             return l * r;
             break;
         case DIV :
+            if (r == 0.0)
+            {
+                result->SetValidity (false);
+                result->AttachInformation("A divide by zero Exception is caught during the calculation. \n");
+            }
             return l / r;
             break;
         case EXP :
@@ -321,7 +326,7 @@ int ExpressionParser :: OperatorReflection (char c)
     }
 }
 
-void ExpressionParser :: ParseExpression ()
+CalculationResult *ExpressionParser :: ParseExpression ()
 {
     CalculationResult *checkResult = CheckExpression ();
     if (!checkResult->GetValidity ())
@@ -329,7 +334,33 @@ void ExpressionParser :: ParseExpression ()
         result->SetAllParams(0.0, false, "The Expression is not parsed and calculated because following error(s) is (are) detected: \n" + checkResult->GetInformation ());
     }
     else
-        result->SetAllParams(GetValue (0, p_expr_size - 1), true, "HAHA \n");
+        result->SetAllParams(GetValue (0, p_expr_size - 1), true, "The result is valid \n");
+    return new CalculationResult (*result);
+}
+
+CalculationResult *ExpressionParser :: ParseExpression (Expression *expr)
+{
+    Expression *oldExpr = originalExpr;
+    int oldSize = p_expr_size;
+    string oldPExpr = parsedExpr;
+    CalculationResult *oldResult = new CalculationResult (*result);
+    originalExpr = expr;
+    parsedExpr = "";
+    string temp_e = expr->GetExpression ();
+    for (string :: iterator iter = temp_e.begin ();iter != temp_e.end ();iter++)
+    {
+        if (*iter != ' ')
+            parsedExpr += *iter;
+    }
+    p_expr_size = (int)parsedExpr.size ();
+    ParseExpression ();
+    CalculationResult *ret = new CalculationResult (*result);
+    originalExpr = oldExpr;
+    p_expr_size = oldSize;
+    parsedExpr = oldPExpr;
+    result = oldResult;
+    return ret;
+
 }
 
 CalculationResult *ExpressionParser :: GetResult ()
@@ -395,7 +426,7 @@ CalculationResult *ExpressionParser :: AddNewFunction (Function *func)
         CalculationResult *function_anal = CheckFunctionValidity (newFunc);
         if (!function_anal->GetValidity ())
         {
-            ret->SetAllParams(0.0, false, "The expression of the function has some errors: \n" + function_anal->GetInformation () + "\n Hence the Function is not added into the parser! ");
+            ret->SetAllParams(0.0, false, "The expression of the function has some errors: \n" + function_anal->GetInformation () + "Hence the Function is not added into the parser! ");
         }
         else
         {
@@ -409,7 +440,7 @@ CalculationResult *ExpressionParser :: AddNewFunction (Function *func)
 CalculationResult *ExpressionParser :: DeleteFunction (string name)
 {
     CalculationResult *ret = new CalculationResult ();
-    if (func_dic[name] == NULL)
+    if (func_dic.find (name) == func_dic.end ())
     {
         ret->SetAllParams(0.0, false, "The indicated function does not exist at all. \n");
     }
@@ -557,7 +588,7 @@ void ExpressionParser :: CheckFunctionExpression (CalculationResult *ret, string
         }
         return;
     }
-    if (func_dic[funcName] == NULL)
+    if (func_dic.find (funcName) == func_dic.end ())
     {
         ret->AttachInformation("Invalid Function \'" + funcName + "\' Detected! \n");
     }
@@ -584,7 +615,7 @@ void ExpressionParser :: CheckSingleExpression (CalculationResult *ret, int l, i
     string str = parsedExpr.substr (l, r - l + 1);
     if (isalpha (str[0]))
     {
-        if (!var_dic[str])
+        if (var_dic.find (str) == var_dic.end ())
         {
             ret->AttachInformation("Variable \'" + str + "\' does not exist. \n");
         }
@@ -609,6 +640,45 @@ void ExpressionParser :: CheckSingleExpression (CalculationResult *ret, int l, i
             return;
         }
     }
+}
+
+CalculationResult *ExpressionParser :: CheckExpression (Expression *expr)
+{
+    Expression *oldExpr = originalExpr;
+    int oldSize = p_expr_size;
+    string oldPExpr = parsedExpr;
+    CalculationResult *oldResult = new CalculationResult (*result);
+    originalExpr = expr;
+    parsedExpr = "";
+    string temp_e = expr->GetExpression ();
+    for (string :: iterator iter = temp_e.begin ();iter != temp_e.end ();iter++)
+    {
+        if (*iter != ' ')
+            parsedExpr += *iter;
+    }
+    p_expr_size = (int)parsedExpr.size ();
+    CheckExpression ();
+    CalculationResult *ret = new CalculationResult (*result);
+    originalExpr = oldExpr;
+    p_expr_size = oldSize;
+    parsedExpr = oldPExpr;
+    result = oldResult;
+    return ret;
+}
+
+CalculationResult *ExpressionParser :: SetToNewExpression (Expression *expr)
+{
+    originalExpr = expr;
+    parsedExpr = "";
+    string temp_e = expr->GetExpression ();
+    for (string :: iterator iter = temp_e.begin ();iter != temp_e.end ();iter++)
+    {
+        if (*iter != ' ')
+            parsedExpr += *iter;
+    }
+    p_expr_size = (int)parsedExpr.size ();
+    CheckExpression ();
+    return result;
 }
 
 CalculationResult *ExpressionParser :: CheckFunctionValidity (Function *func)

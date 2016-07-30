@@ -16,6 +16,7 @@
 #include <sqlite3.h>
 
 #include "../src/ExpressionParser.hpp"
+#include "../src/EquationSolver.hpp"
 
 using namespace std;
 
@@ -40,5 +41,18 @@ int main ()
     cout << check->GetInformation () << endl;
     CalculationResult *res2 = newParser->CheckExpression ();
     cout << res2->GetInformation () << endl;
+    
+    Expression *xExpression = new Expression ("x + sin (17 * x + 4)");
+    ExpressionParser *xParser = new ExpressionParser (xExpression);
+    EquationSolver *solver = new EquationSolver (xExpression, xParser, "x");
+    CalculationResult *xRes = solver->SolveByBinarySearch (-200, 200);
+    cout << xRes->GetResult () << endl;
+    Expression *xxExpression = new Expression ("1 + 17 * cos (17 * x + 4)");
+    CalculationResult *nRes = solver->SolveByNewton (xxExpression, 0.8);
+    cout << nRes->GetResult () << endl;
+    xParser->SetVariable("x", 0.126825);
+    cout << xParser->ParseExpression ()->GetResult () << endl;
+    CalculationResult *sRes = solver->SolveBySecant (0.8, 0.801);
+    cout << sRes->GetResult () << endl;
     return 0;
 }
