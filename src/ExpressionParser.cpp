@@ -375,17 +375,33 @@ vector< pair < int, int > > *ExpressionParser :: GetParameters (int l, int r)
     return ret;
 }
 
+CalculationResult *ExpressionParser :: AddNewFunction (string func_name, int num, string expr)
+{
+    Function *newFunc = new Function (func_name, num, new Expression (expr));
+    return AddNewFunction (newFunc);
+}
+
 CalculationResult *ExpressionParser :: AddNewFunction (Function *func)
 {
     CalculationResult *ret = new CalculationResult ();
-    if (func_dic[func->GetName ()] != NULL)
+    Function *newFunc = new Function (func);
+    funcs.push_back (newFunc);
+    if (func_dic[newFunc->GetName ()] != NULL)
     {
         ret->SetAllParams(0.0, false, "The function has already been defined! \n");
     }
     else
     {
-        func_dic[func->GetName ()] = func;
-        ret->SetAllParams(1.0, true, "The function has been inserted into the parser! \n");
+        CalculationResult *function_anal = CheckFunctionValidity (newFunc);
+        if (!function_anal->GetValidity ())
+        {
+            ret->SetAllParams(0.0, false, "The expression of the function has some errors: \n" + function_anal->GetInformation () + "\n Hence the Function is not added into the parser! ");
+        }
+        else
+        {
+            func_dic[newFunc->GetName ()] = newFunc;
+            ret->SetAllParams(1.0, true, "The function has been inserted into the parser! \n");
+        }
     }
     return ret;
 }
@@ -399,6 +415,15 @@ CalculationResult *ExpressionParser :: DeleteFunction (string name)
     }
     else
     {
+        for (vector <Function *> :: iterator iter = funcs.begin ();iter != funcs.end ();iter++)
+        {
+            Function *func = *iter;
+            if (func->GetName ()== name)
+            {
+                funcs.erase (iter);
+                break;
+            }
+        }
         func_dic[name] = NULL;
         ret->SetAllParams(1.0, true, "The indicated function has been removed from the parser! \n");
     }
@@ -584,4 +609,23 @@ void ExpressionParser :: CheckSingleExpression (CalculationResult *ret, int l, i
             return;
         }
     }
+}
+
+CalculationResult *ExpressionParser :: CheckFunctionValidity (Function *func)
+{
+    int varNum = func->GetVarNum ();
+    Expression *expr = func->GetExpression ();
+    ExpressionParser *newParser = new ExpressionParser (expr);
+    newParser->InitializeFunctionLib (&func_dic);
+    char c = 'a' - 1;
+    for (int i = 0;i < varNum;i++)
+    {
+        newParser->SetVariable(string (1, ++c), 1.0);
+    }
+    return newParser->CheckExpression ();
+}
+
+vector <Function *> ExpressionParser :: GetFunctionList ()
+{
+    return funcs;
 }

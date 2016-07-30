@@ -34,6 +34,7 @@ class Expression
     
     //Constructors
     Expression ();
+    Expression (Expression *);
     Expression (string);
     
     //Methods

@@ -33,6 +33,7 @@ class Function
     public :
     
     Function ();
+    Function (Function *);
     Function (string, int, Expression *);
     
     void SetName (string);
