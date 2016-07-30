@@ -23,12 +23,12 @@ int main ()
 {
     cout << sqlite3_version << endl;
     cout << "Hello World!" << endl;
-    Expression *expr = new Expression ("fx (1.1 * 1.1 * 1.1, 2)");
+    Expression *expr = new Expression ("fx (1.1, 88) + 3 * 3");
     ExpressionParser *parser = new ExpressionParser (expr);
     parser->SetVariable ("x", 5);
     parser->SetVariable ("t", 4);
     Function *f1 = new Function ("f", 1, new Expression ("a * a * a"));
-    Function *f2 = new Function ("fx", 2, new Expression ("a + b"));
+    Function *f2 = new Function ("fx", 2, new Expression ("max (a, f (a)) + b"));
     parser->AddNewFunction(f1);
     parser->AddNewFunction(f2);
     parser->ParseExpression ();

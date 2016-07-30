@@ -512,9 +512,24 @@ void ExpressionParser :: CheckThreeItemExpression (CalculationResult *ret, int l
 
 void ExpressionParser :: CheckFunctionExpression (CalculationResult *ret, string funcName, int l, int r)
 {
-    if (funcName == "sin" || funcName == "cos" || funcName == "arcsin" || funcName == "arccos" || funcName == "tan" || funcName == "cot" || funcName == "arctan" || funcName == "arccot" || funcName == "abs" || funcName == "max")
+    if (funcName == "sin" || funcName == "cos" || funcName == "arcsin" || funcName == "arccos" || funcName == "tan" || funcName == "cot" || funcName == "arctan" || funcName == "arccot" || funcName == "abs")
     {
         CheckThreeItemExpression(ret, l, r);
+        return;
+    }
+    else if (funcName == "max")
+    {
+        vector < pair < int, int > > *params = GetParameters (l + 1, r - 1);
+        if (params->size () != 2)
+        {
+            ret->AttachInformation ("Function \'" + string("max") + "\' Requires" + to_string (2) + " Parameter(s), while " + to_string (params->size ()) + " Provided. \n");
+            return;
+        }
+        for (vector < pair < int, int > > :: iterator iter = params->begin ();iter != params->end ();iter++)
+        {
+            pair < int, int > interval = *iter;
+            CheckThreeItemExpression (ret, interval.first, interval.second);
+        }
         return;
     }
     if (func_dic[funcName] == NULL)
