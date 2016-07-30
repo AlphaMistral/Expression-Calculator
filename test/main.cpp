@@ -15,7 +15,7 @@
 #include <vector>
 #include <sqlite3.h>
 
-#include "ExpressionParser.hpp"
+#include "../src/ExpressionParser.hpp"
 
 using namespace std;
 
