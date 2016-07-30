@@ -58,6 +58,25 @@ CalculationResult *EquationSolver :: SolveByBinarySearch (double l,  double r)
 {
     CalculationResult *ret = new CalculationResult ();
     double mid = (l + r) / 2.0;
+    parser->SetVariable (var_name, l);
+    double t1 = parser->ParseExpression ()->GetResult ();
+    parser->SetVariable (var_name, r);
+    double t2 = parser->ParseExpression ()->GetResult ();
+    if (t1 == 0)
+    {
+        ret->SetAllParams(l, true, "The left end point is the solution. \n");
+        return ret;
+    }
+    else if (t2 == 0)
+    {
+        ret->SetAllParams(r, true, "The right end point is the solution. \n");
+        return ret;
+    }
+    else if (t1 * t2 > 0)
+    {
+        ret->SetAllParams(0.0, false, "The indicated interval may not include a solution since the function has values of the same sign on the two end points. Please check. \n");
+        return ret;
+    }
     while (abs (l - r) > EPS)
     {
         mid = (l + r) / 2.0;
@@ -71,8 +90,17 @@ CalculationResult *EquationSolver :: SolveByBinarySearch (double l,  double r)
         {
             r = mid;
         }
-        else l = mid;
+        else if (c1 * c2 > 0)
+            l = mid;
+        else
+        {
+            if (c1 == 0)
+                mid = l;
+            else if (c3 == 0)
+                mid = r;
+            break;
+        }
     }
-    ret->SetAllParams(mid, true, "Suc! \n");
+    ret->SetAllParams(mid, true, "A solution is found in the interval. However it may not be the only solution to the equation. \n");
     return ret;
 }

@@ -415,7 +415,7 @@ CalculationResult *ExpressionParser :: AddNewFunction (Function *func)
 CalculationResult *ExpressionParser :: DeleteFunction (string name)
 {
     CalculationResult *ret = new CalculationResult ();
-    if (func_dic[name] == NULL)
+    if (func_dic.find (name) == func_dic.end ())
     {
         ret->SetAllParams(0.0, false, "The indicated function does not exist at all. \n");
     }
@@ -563,7 +563,7 @@ void ExpressionParser :: CheckFunctionExpression (CalculationResult *ret, string
         }
         return;
     }
-    if (func_dic[funcName] == NULL)
+    if (func_dic.find (funcName) == func_dic.end ())
     {
         ret->AttachInformation("Invalid Function \'" + funcName + "\' Detected! \n");
     }
