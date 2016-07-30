@@ -35,8 +35,9 @@ int main ()
     parser->GetResult ()->OutputResult ();
     expr->SetToNewExpression("7.xx+512*sin(11).14)");
     ExpressionParser *newParser = new ExpressionParser (expr);
-    Function *f3 = new Function ("fx", 2, new Expression ("a + b"));
-    newParser->AddNewFunction(f3);
+    Function *f3 = new Function ("fx", 2, new Expression ("a + b +"));
+    CalculationResult *check = newParser->AddNewFunction(f3);
+    cout << check->GetInformation () << endl;
     CalculationResult *res2 = newParser->CheckExpression ();
     cout << res2->GetInformation () << endl;
     return 0;

@@ -15,6 +15,13 @@ Expression :: Expression ()
     status = ExpressionStatus :: uncertain;
 }
 
+Expression :: Expression (Expression *e)
+{
+    expr = e->expr;
+    expr_size = e->expr_size;
+    status = e->status;
+}
+
 Expression :: Expression (string s)
 {
     expr = s;

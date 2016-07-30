@@ -15,6 +15,13 @@ Function :: Function ()
     num_func = 0;
 }
 
+Function :: Function (Function *func)
+{
+    expr_func = new Expression (func->expr_func);
+    name_func = func->name_func;
+    num_func = func->num_func;
+}
+
 Function :: Function (string name, int num, Expression *expr)
 {
     expr_func = expr;

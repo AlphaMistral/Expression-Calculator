@@ -50,6 +50,7 @@ class ExpressionParser
     int p_expr_size;
     map < string, double > var_dic;
     map < string, Function * > func_dic;
+    vector <Function *> funcs;
     CalculationResult *result;
     
     double GetValue (int, int);
@@ -66,6 +67,8 @@ class ExpressionParser
     void CheckFunctionExpression (CalculationResult *, string, int, int);
     void CheckThreeItemExpression (CalculationResult *, int, int);
     
+    CalculationResult * CheckFunctionValidity (Function *);
+    
     public :
     
     //Constructors
@@ -80,10 +83,13 @@ class ExpressionParser
     CalculationResult *SetVariable (string, double);
     CalculationResult *DeleteVariable (string);
     CalculationResult *AddNewFunction (Function *);
+    CalculationResult *AddNewFunction (string, int, string);
     CalculationResult *DeleteFunction (string);
     
     CalculationResult *CheckExpression ();
     
     void InitializeFunctionLib (map < string, Function * > *);
+    
+    vector <Function *> GetFunctionList ();
 };
 #endif /* ExpressionParser_hpp */
