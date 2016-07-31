@@ -30,13 +30,19 @@ EquationSolver :: EquationSolver ()
     parser = NULL;
 }
 
+EquationSolver :: ~EquationSolver ()
+{
+    //delete result;
+}
+
 EquationSolver :: EquationSolver (Expression *expr, ExpressionParser *p, string name)
 {
     expression = expr;
     status = UnSolved;
     var_name = name;
     parser = p;
-    result = p->SetToNewExpression (expression);
+    CalculationResult *rr = p->SetToNewExpression (expression);
+    delete rr;
 }
 
 void EquationSolver :: SetVarName(string name)

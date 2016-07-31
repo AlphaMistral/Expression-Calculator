@@ -90,7 +90,7 @@ class ExpressionParser
     
     CalculationResult *CheckExpression ();
     CalculationResult *CheckExpression (Expression *);
-    void InitializeFunctionLib (map < string, Function * > *);
+    void InitializeFunctionLib (map < string, Function * >);
     
     vector <Function *> GetFunctionList ();
     

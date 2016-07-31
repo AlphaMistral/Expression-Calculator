@@ -58,7 +58,7 @@ double ExpressionParser :: GetValue (int l, int r)
         index = GetChildExpressionPos (index);
         if (index == r - 1)
             break;
-        int oprf = OperatorReflection(parsedExpr[++index]);
+        int oprf = OperatorReflection (parsedExpr[++index]);
         if (index >= r) break;
         pair < int, int > tempOperate = make_pair (oprf, index);
         operate = min (operate, tempOperate);
@@ -68,7 +68,7 @@ double ExpressionParser :: GetValue (int l, int r)
     int splitPosition = operate.second;
     if (splitPosition != INT_MAX)
     {
-        ans = GetThreeItemOperationValue(op, GetValue (l, splitPosition - 1), GetValue (splitPosition + 1, r));
+        ans = GetThreeItemOperationValue (op, GetValue (l, splitPosition - 1), GetValue (splitPosition + 1, r));
     }
     else
     {
@@ -98,11 +98,11 @@ double ExpressionParser :: GetValue (int l, int r)
             }
             if (isFunction)
             {
-                ans = GetFuncValue(parsedExpr.substr(l, functionName_size - 1), l + functionName_size, r - 1);
+                ans = GetFuncValue (parsedExpr.substr(l, functionName_size - 1), l + functionName_size, r - 1);
             }
             else
             {
-                ans = GetSingleValue(l, r);
+                ans = GetSingleValue (l, r);
             }
         }
     }
@@ -153,7 +153,7 @@ double ExpressionParser :: GetSingleValue (int l, int r)
             ans = 2.71828;
         else
         {
-            if (var_dic[varName])
+            if (var_dic.find (varName) != var_dic.end ())
             {
                 ans = var_dic[varName];
             }
@@ -238,7 +238,7 @@ double ExpressionParser :: GetUserDefinedFuncValue (string funcName, int l, int 
         values->push_back(GetValue(p.first, p.second));
     }
     ExpressionParser *newParser = new ExpressionParser (expr);
-    newParser->InitializeFunctionLib (&func_dic);
+    newParser->InitializeFunctionLib (func_dic);
     char c = 'a' - 1;
     for (vector < double > :: iterator iter = values->begin ();iter != values->end ();iter++)
     {
@@ -468,9 +468,9 @@ CalculationResult *ExpressionParser :: DeleteFunction (string name)
     return ret;
 }
 
-void ExpressionParser :: InitializeFunctionLib (map<string, Function *> *lib)
+void ExpressionParser :: InitializeFunctionLib (map<string, Function *> lib)
 {
-    func_dic = *lib;
+    func_dic = lib;
 }
 
 CalculationResult *ExpressionParser :: CheckExpression ()
@@ -686,8 +686,7 @@ CalculationResult *ExpressionParser :: SetToNewExpression (Expression *expr)
             parsedExpr += *iter;
     }
     p_expr_size = (int)parsedExpr.size ();
-    CheckExpression ();
-    return result;
+    return CheckExpression ();
 }
 
 CalculationResult *ExpressionParser :: CheckFunctionValidity (Function *func)
@@ -695,7 +694,7 @@ CalculationResult *ExpressionParser :: CheckFunctionValidity (Function *func)
     int varNum = func->GetVarNum ();
     Expression *expr = func->GetExpression ();
     ExpressionParser *newParser = new ExpressionParser (expr);
-    newParser->InitializeFunctionLib (&func_dic);
+    newParser->InitializeFunctionLib (func_dic);
     char c = 'a' - 1;
     for (int i = 0;i < varNum;i++)
     {
