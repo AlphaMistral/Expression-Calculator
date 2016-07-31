@@ -19,7 +19,7 @@
 
 using namespace std;
 
-class CalculationResult
+/*class CalculationResult
 {
     private :
     
@@ -49,4 +49,44 @@ class CalculationResult
     //Debugging Functions
     void OutputResult ();
 };
+*/
+
+struct CalculationResult
+{
+    double result;
+    bool isValid;
+    string statusInformation;
+    
+    CalculationResult ()
+    {
+        result = 0.0;
+        isValid = false;
+        statusInformation = "";
+    }
+    
+    CalculationResult (double r, bool i, string s)
+    {
+        result = r;
+        isValid = i;
+        statusInformation = s;
+    }
+    
+    void SetAllParams (double r, bool i, string s)
+    {
+        result = r;
+        isValid = i;
+        statusInformation = s;
+    }
+    void OutputResult ()
+    {
+        cerr << endl << "******The Output Result for the indicated operation is as follows******" << endl;
+        cerr << "The numerical result is: " << result << endl;
+        cerr << "The result is ";
+        if (!isValid) cerr << "in";
+        cerr << "valid." << endl;
+        cerr << "The Status Information is: " << statusInformation << endl;
+        cerr << "******This is the end of the result of the indicated operation******" << endl << endl;
+    }
+};
+
 #endif /* Calculation_hpp */

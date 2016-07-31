@@ -26,11 +26,30 @@ int main ()
     cout << "Hello World!" << endl;
     for (int i = 0;i < 10000000;i++)
     {
+        break;
+        Expression *expr1 = new Expression ("fx (1.1, 88) + 19 * sin (11)");
+        Expression *expr2 = new Expression ("a * a * a");
+        Expression *expr3 = new Expression ("max (a, f (a)) + b");
+        ExpressionParser *parser = new ExpressionParser (expr1);
+        Function *f1 = new Function ("f", 1, expr2);
+        Function *f2 = new Function ("fx", 2, expr3);
+        parser->AddNewFunction (f1);
+        parser->AddNewFunction (f2);
+        cout << parser->ParseExpression().result << endl;
+        delete expr1;
+        delete expr2;
+        delete expr3;
+        delete parser;
+        delete f1;
+        delete f2;
+    }
+    for (int i = 0;i < 10000000;i++)
+    {
         Expression *xExpression = new Expression ("x + sin (17 * x + 4)");
         ExpressionParser *xParser = new ExpressionParser (xExpression);
         EquationSolver *solver = new EquationSolver (xExpression, xParser, "x");
-        CalculationResult *xRes = solver->SolveByBinarySearch (-200, 200);
-        cout << xRes->GetResult () << endl;
+        CalculationResult xRes = solver->SolveByBinarySearch (-200, 200);
+        cout << xRes.result << endl;
         //Expression *xxExpression = new Expression ("1 + 17 * cos (17 * x + 4)");
         //CalculationResult *nRes = solver->SolveByNewton (xxExpression, 0.8);
         //cout << nRes->GetResult () << endl;
@@ -42,7 +61,6 @@ int main ()
         delete xExpression;
         delete xParser;
         delete solver;
-        delete xRes;
         //delete nRes;
         //delete sRes;
         //delete tt;
