@@ -67,7 +67,7 @@ class ExpressionParser
     void CheckFunctionExpression (CalculationResult *, string, int, int);
     void CheckThreeItemExpression (CalculationResult *, int, int);
     
-    CalculationResult * CheckFunctionValidity (Function *);
+    CalculationResult *CheckFunctionValidity (Function *);
     
     public :
     
@@ -75,13 +75,15 @@ class ExpressionParser
     ExpressionParser ();
     ExpressionParser (Expression *);
     
+    ~ExpressionParser ();
+    
     //Member Methods
     CalculationResult *ParseExpression ();
     CalculationResult *ParseExpression (Expression *);
     CalculationResult *GetResult ();
     
-    CalculationResult *SetVariable (string, double);
-    CalculationResult *DeleteVariable (string);
+    void SetVariable (string, double);
+    void DeleteVariable (string);
     CalculationResult *AddNewFunction (Function *);
     CalculationResult *AddNewFunction (string, int, string);
     CalculationResult *DeleteFunction (string);

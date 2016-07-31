@@ -15,6 +15,7 @@ ExpressionParser :: ExpressionParser ()
     p_expr_size = 0;
     var_dic.clear ();
     func_dic.clear ();
+    funcs.clear ();
     result = NULL;
 }
 
@@ -31,7 +32,20 @@ ExpressionParser :: ExpressionParser (Expression *e)
     p_expr_size = (int)parsedExpr.size ();
     var_dic.clear ();
     func_dic.clear ();
+    funcs.clear ();
     result = new CalculationResult ();
+}
+
+ExpressionParser :: ~ExpressionParser ()
+{
+    var_dic.clear ();
+    func_dic.clear ();
+    for (vector <Function *> :: iterator iter = funcs.begin ();iter != funcs.end ();iter++)
+    {
+        delete *iter;
+    }
+    funcs.clear ();
+    delete result;
 }
 
 double ExpressionParser :: GetValue (int l, int r)
@@ -202,7 +216,10 @@ double ExpressionParser :: GetFuncValue(string funcName, int l, int r)
     else if (funcName == "max")
     {
         vector < pair < int, int > > *params = GetParameters(l, r);
-        return max (GetValue ((*params)[0].first, (*params)[0].second), GetValue ((*params)[1].first, (*params)[1].second));
+        int l1 = (*params)[0].first, r1 = (*params)[0].second;
+        int l2 = (*params)[1].first, r2 = (*params)[1].second;
+        delete params;
+        return max (GetValue (l1, r1), GetValue (l2, r2));
     }
     else ans = GetUserDefinedFuncValue (funcName, l, r);
     return ans;
@@ -232,6 +249,9 @@ double ExpressionParser :: GetUserDefinedFuncValue (string funcName, int l, int 
     CalculationResult *tempAns = newParser->GetResult ();
     ans = tempAns->GetResult ();
     delete values;
+    delete tempAns;
+    delete newParser;
+    delete params;
     return ans;
 }
 
@@ -336,6 +356,7 @@ CalculationResult *ExpressionParser :: ParseExpression ()
     }
     else
         result->SetAllParams(GetValue (0, p_expr_size - 1), true, "The result is valid \n");
+    delete checkResult;
     return new CalculationResult (*result);
 }
 
@@ -371,20 +392,9 @@ CalculationResult *ExpressionParser :: GetResult ()
     return ret;
 }
 
-CalculationResult *ExpressionParser :: SetVariable(string varName, double value)
+void ExpressionParser :: SetVariable(string varName, double value)
 {
-    CalculationResult *ret = new CalculationResult ();
-    if (var_dic.find (varName) != var_dic.end ())
-    {
-        var_dic[varName] = value;
-        ret->SetAllParams(1.0, true, "Altered! \n");
-    }
-    else
-    {
-        var_dic[varName] = value;
-        ret->SetAllParams(1.0, true, "Added! \n");
-    }
-    return ret;
+    var_dic[varName] = value;
 }
 
 vector< pair < int, int > > *ExpressionParser :: GetParameters (int l, int r)
@@ -408,18 +418,12 @@ vector< pair < int, int > > *ExpressionParser :: GetParameters (int l, int r)
     return ret;
 }
 
-CalculationResult *ExpressionParser :: AddNewFunction (string func_name, int num, string expr)
-{
-    Function *newFunc = new Function (func_name, num, new Expression (expr));
-    return AddNewFunction (newFunc);
-}
-
 CalculationResult *ExpressionParser :: AddNewFunction (Function *func)
 {
-    CalculationResult *ret = new CalculationResult ();
+    CalculationResult *ret = new CalculationResult (1, true, "aff");
     Function *newFunc = new Function (func);
     funcs.push_back (newFunc);
-    if (func_dic[newFunc->GetName ()] != NULL)
+    if (func_dic.find (newFunc->GetName ()) != func_dic.end ())
     {
         ret->SetAllParams(0.0, false, "The function has already been defined! \n");
     }
@@ -435,6 +439,7 @@ CalculationResult *ExpressionParser :: AddNewFunction (Function *func)
             func_dic[newFunc->GetName ()] = newFunc;
             ret->SetAllParams(1.0, true, "The function has been inserted into the parser! \n");
         }
+        delete function_anal;
     }
     return ret;
 }
@@ -588,6 +593,7 @@ void ExpressionParser :: CheckFunctionExpression (CalculationResult *ret, string
             pair < int, int > interval = *iter;
             CheckThreeItemExpression (ret, interval.first, interval.second);
         }
+        delete params;
         return;
     }
     if (func_dic.find (funcName) == func_dic.end ())
@@ -608,6 +614,7 @@ void ExpressionParser :: CheckFunctionExpression (CalculationResult *ret, string
             pair < int, int > interval = *iter;
             CheckThreeItemExpression (ret, interval.first, interval.second);
         }
+        delete params;
     }
 }
 
@@ -694,8 +701,10 @@ CalculationResult *ExpressionParser :: CheckFunctionValidity (Function *func)
     {
         newParser->SetVariable(string (1, ++c), 1.0);
     }
-    CalculationResult *ret = new CalculationResult (*(newParser->CheckExpression ()));
+    CalculationResult *checkResult = newParser->CheckExpression ();
+    CalculationResult *ret = new CalculationResult (*checkResult);
     delete newParser;
+    delete checkResult;
     return ret;
 }
 

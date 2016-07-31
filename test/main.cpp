@@ -24,16 +24,42 @@ int main ()
 {
     cout << sqlite3_version << endl;
     cout << "Hello World!" << endl;
-    Expression *expr = new Expression ("fx (1.1, 88) + 3 * 3");
-    ExpressionParser *parser = new ExpressionParser (expr);
-    parser->SetVariable ("x", 5);
-    parser->SetVariable ("t", 4);
-    Function *f1 = new Function ("f", 1, new Expression ("a * a * a"));
-    Function *f2 = new Function ("fx", 2, new Expression ("max (a, f (a)) + b"));
-    parser->AddNewFunction(f1);
-    parser->AddNewFunction(f2);
-    parser->ParseExpression ();
-    parser->GetResult ()->OutputResult ();
+    for (int i = 0;i < 100000000;i++)
+    {
+        break;
+        Expression *expr1 = new Expression ("7 * 1.5 ^ 3 + 8 + sin (1)");
+        ExpressionParser *parser1 = new ExpressionParser (expr1);
+        CalculationResult *rrr = parser1->CheckExpression ();
+        rrr->OutputResult ();
+        delete expr1;
+        delete parser1;
+        delete rrr;
+    }
+    for (int i = 0;i < 100000000;i++)
+    {
+        Expression *expr = new Expression ("fx (1.1, 88) + 3 * 3");
+        Expression *expr1 = new Expression ("a * a * a");
+        Expression *expr2 = new Expression ("max (a, f (a)) + b");
+        ExpressionParser *parser = new ExpressionParser (expr);
+        parser->SetVariable ("x", 5);
+        parser->SetVariable ("t", 4);
+        Function *f1 = new Function ("f", 1, expr1);
+        Function *f2 = new Function ("fx", 2, expr2);
+        CalculationResult *c1 = parser->AddNewFunction(f1);
+        CalculationResult *c2 = parser->AddNewFunction(f2);
+        //CalculationResult *rrr = parser->CheckExpression();
+        //rrr->OutputResult ();
+        delete expr;
+        delete expr1;
+        delete expr2;
+        delete f1;
+        delete f2;
+        delete parser;
+        delete c1;
+        delete c2;
+        //delete rrr;
+    }
+    return 0;/*
     expr->SetToNewExpression("7.xx+512*sin(11).14)");
     ExpressionParser *newParser = new ExpressionParser (expr);
     Function *f3 = new Function ("fx", 2, new Expression ("a + b +"));
@@ -55,4 +81,5 @@ int main ()
     CalculationResult *sRes = solver->SolveBySecant (0.8, 0.801);
     cout << sRes->GetResult () << endl;
     return 0;
+              */
 }

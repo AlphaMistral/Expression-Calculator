@@ -17,7 +17,7 @@ Function :: Function ()
 
 Function :: Function (Function *func)
 {
-    expr_func = new Expression (func->expr_func);
+    expr_func = func->expr_func;
     name_func = func->name_func;
     num_func = func->num_func;
 }
