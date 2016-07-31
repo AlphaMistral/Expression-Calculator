@@ -28,7 +28,7 @@ int main (int argc, char ** argv)
     glutInit (&argc, argv);
     cout << sqlite3_version << endl;
     cout << "Hello World!" << endl;
-    Expression *y = new Expression ("tan (sin (x) ^ max (x, x * x))");
+    Expression *y = new Expression ("5 * x + 4");
     ExpressionParser *pp = new ExpressionParser (y);
     OpenGLPlotter *plotter = new OpenGLPlotter (pp, make_pair (-3, 3), 0.1);
     cout << "We are here!" << endl;

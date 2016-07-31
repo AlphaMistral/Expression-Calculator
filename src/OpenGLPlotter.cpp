@@ -8,7 +8,7 @@
 
 #include "OpenGLPlotter.hpp"
 
-ExpressionParser *OpenGLPlotter :: refParser = NULL;
+ExpressionParser *OpenGLPlotter :: plottingParser = NULL;
 
 OpenGLPlotter :: OpenGLPlotter ()
 {
@@ -26,13 +26,14 @@ void OpenGLPlotter :: Plot ()
 {
     if (refParser == NULL)
         return;
-    //glutInit(&argc, argv);
+    
+    plottingParser = refParser;
     
     glutInitDisplayMode (GLUT_RGB | GLUT_SINGLE);
     
     glutInitWindowPosition (100, 100);
     
-    glutInitWindowSize (400, 400);
+    glutInitWindowSize (800, 800);
     
     glutCreateWindow ("第一个OpenGL程序");
     
@@ -54,10 +55,10 @@ void OpenGLPlotter :: Display ()
     glBegin (GL_LINE_STRIP);
     double factor = 0.1f;
     
-    for(x = -1.0f / factor;x < 1.0f / factor;x += 0.01f)
+    for(x = -1.0f / factor;x < 1.0f / factor;x += 0.1f)
     {
-        refParser->SetVariable ("x", x);
-        double res = refParser->ParseExpression ().result;
+        plottingParser->SetVariable ("x", x);
+        double res = plottingParser->ParseExpression ().result;
         glVertex2f (x * factor, res * factor);
     }
     glEnd ();

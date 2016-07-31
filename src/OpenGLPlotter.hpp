@@ -30,8 +30,12 @@ class OpenGLPlotter
     private :
     
     pair < int, int > interval;
-    static ExpressionParser *refParser;
+    
+    ExpressionParser *refParser;
+    
     double factor;
+    
+    static ExpressionParser *plottingParser;
     
     static void Display (void);
     public :
