@@ -14,19 +14,30 @@
 #include <algorithm>
 #include <vector>
 #include <sqlite3.h>
+#include <OpenGL/OpenGL.h>
+#include <GLUT/GLUT.h>
 
 #include "../src/ExpressionParser.hpp"
 #include "../src/EquationSolver.hpp"
+#include "../src/OpenGLPlotter.hpp"
 
 using namespace std;
 
-int main ()
+int main (int argc, char ** argv)
 {
+    glutInit (&argc, argv);
     cout << sqlite3_version << endl;
     cout << "Hello World!" << endl;
+    Expression *y = new Expression ("5 * x + 4");
+    ExpressionParser *pp = new ExpressionParser (y);
+    OpenGLPlotter *plotter = new OpenGLPlotter (pp, make_pair (-3, 3), 0.1);
+    cout << "We are here!" << endl;
+    plotter->Plot ();
+    cout << "Hello Again!" << endl;
+    return 0;
     for (int i = 0;i < 10000000;i++)
     {
-        break;
+        //break;
         Expression *expr1 = new Expression ("fx (1.1, 88) + 19 * sin (11)");
         Expression *expr2 = new Expression ("a * a * a");
         Expression *expr3 = new Expression ("max (a, f (a)) + b");
