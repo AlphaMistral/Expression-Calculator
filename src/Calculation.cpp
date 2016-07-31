@@ -7,7 +7,7 @@
 //
 
 #include "Calculation.hpp"
-
+/*
 CalculationResult :: CalculationResult ()
 {
     result = 0;
@@ -81,3 +81,4 @@ void CalculationResult :: OutputResult ()
     cerr << "The Status Information is: " << statusInformation << endl;
     cerr << "******This is the end of the result of the indicated operation******" << endl << endl;
 }
+*/

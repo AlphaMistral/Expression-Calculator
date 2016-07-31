@@ -24,35 +24,47 @@ int main ()
 {
     cout << sqlite3_version << endl;
     cout << "Hello World!" << endl;
-    Expression *expr = new Expression ("fx (1.1, 88) + 3 * 3");
-    ExpressionParser *parser = new ExpressionParser (expr);
-    parser->SetVariable ("x", 5);
-    parser->SetVariable ("t", 4);
-    Function *f1 = new Function ("f", 1, new Expression ("a * a * a"));
-    Function *f2 = new Function ("fx", 2, new Expression ("max (a, f (a)) + b"));
-    parser->AddNewFunction(f1);
-    parser->AddNewFunction(f2);
-    parser->ParseExpression ();
-    parser->GetResult ()->OutputResult ();
-    expr->SetToNewExpression("7.xx+512*sin(11).14)");
-    ExpressionParser *newParser = new ExpressionParser (expr);
-    Function *f3 = new Function ("fx", 2, new Expression ("a + b +"));
-    CalculationResult *check = newParser->AddNewFunction(f3);
-    cout << check->GetInformation () << endl;
-    CalculationResult *res2 = newParser->CheckExpression ();
-    cout << res2->GetInformation () << endl;
-    
-    Expression *xExpression = new Expression ("x + sin (17 * x + 4)");
-    ExpressionParser *xParser = new ExpressionParser (xExpression);
-    EquationSolver *solver = new EquationSolver (xExpression, xParser, "x");
-    CalculationResult *xRes = solver->SolveByBinarySearch (-200, 200);
-    cout << xRes->GetResult () << endl;
-    Expression *xxExpression = new Expression ("1 + 17 * cos (17 * x + 4)");
-    CalculationResult *nRes = solver->SolveByNewton (xxExpression, 0.8);
-    cout << nRes->GetResult () << endl;
-    xParser->SetVariable("x", 0.126825);
-    cout << xParser->ParseExpression ()->GetResult () << endl;
-    CalculationResult *sRes = solver->SolveBySecant (0.8, 0.801);
-    cout << sRes->GetResult () << endl;
+    for (int i = 0;i < 10000000;i++)
+    {
+        break;
+        Expression *expr1 = new Expression ("fx (1.1, 88) + 19 * sin (11)");
+        Expression *expr2 = new Expression ("a * a * a");
+        Expression *expr3 = new Expression ("max (a, f (a)) + b");
+        ExpressionParser *parser = new ExpressionParser (expr1);
+        Function *f1 = new Function ("f", 1, expr2);
+        Function *f2 = new Function ("fx", 2, expr3);
+        parser->AddNewFunction (f1);
+        parser->AddNewFunction (f2);
+        cout << parser->ParseExpression().result << endl;
+        delete expr1;
+        delete expr2;
+        delete expr3;
+        delete parser;
+        delete f1;
+        delete f2;
+    }
+    for (int i = 0;i < 10000000;i++)
+    {
+        Expression *xExpression = new Expression ("x + sin (17 * x + 4)");
+        ExpressionParser *xParser = new ExpressionParser (xExpression);
+        EquationSolver *solver = new EquationSolver (xExpression, xParser, "x");
+        CalculationResult xRes = solver->SolveByBinarySearch (-200, 200);
+        cout << xRes.result << endl;
+        //Expression *xxExpression = new Expression ("1 + 17 * cos (17 * x + 4)");
+        //CalculationResult *nRes = solver->SolveByNewton (xxExpression, 0.8);
+        //cout << nRes->GetResult () << endl;
+        //xParser->SetVariable("x", 0.126825);
+        //CalculationResult *tt = xParser->ParseExpression ();
+        //cout << tt->GetResult () << endl;
+        //CalculationResult *sRes = solver->SolveBySecant (0.8, 0.801);
+        //cout << sRes->GetResult () << endl;
+        delete xExpression;
+        delete xParser;
+        delete solver;
+        //delete nRes;
+        //delete sRes;
+        //delete tt;
+        //delete xxExpression;
+    }
     return 0;
 }

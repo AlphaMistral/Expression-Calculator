@@ -51,7 +51,7 @@ class ExpressionParser
     map < string, double > var_dic;
     map < string, Function * > func_dic;
     vector <Function *> funcs;
-    CalculationResult *result;
+    CalculationResult result;
     
     double GetValue (int, int);
     double GetSingleValue (int, int);
@@ -67,7 +67,7 @@ class ExpressionParser
     void CheckFunctionExpression (CalculationResult *, string, int, int);
     void CheckThreeItemExpression (CalculationResult *, int, int);
     
-    CalculationResult * CheckFunctionValidity (Function *);
+    CalculationResult CheckFunctionValidity (Function *);
     
     public :
     
@@ -75,23 +75,25 @@ class ExpressionParser
     ExpressionParser ();
     ExpressionParser (Expression *);
     
+    ~ExpressionParser ();
+    
     //Member Methods
-    CalculationResult *ParseExpression ();
-    CalculationResult *ParseExpression (Expression *);
-    CalculationResult *GetResult ();
+    CalculationResult ParseExpression ();
+    CalculationResult ParseExpression (Expression *);
+    CalculationResult GetResult ();
     
-    CalculationResult *SetVariable (string, double);
-    CalculationResult *DeleteVariable (string);
-    CalculationResult *AddNewFunction (Function *);
-    CalculationResult *AddNewFunction (string, int, string);
-    CalculationResult *DeleteFunction (string);
+    void SetVariable (string, double);
+    void DeleteVariable (string);
+    CalculationResult AddNewFunction (Function *);
+    CalculationResult AddNewFunction (string, int, string);
+    CalculationResult DeleteFunction (string);
     
-    CalculationResult *CheckExpression ();
-    CalculationResult *CheckExpression (Expression *);
-    void InitializeFunctionLib (map < string, Function * > *);
+    CalculationResult CheckExpression ();
+    CalculationResult CheckExpression (Expression *);
+    void InitializeFunctionLib (map < string, Function * >);
     
     vector <Function *> GetFunctionList ();
     
-    CalculationResult *SetToNewExpression (Expression *expr);
+    CalculationResult SetToNewExpression (Expression *expr);
 };
 #endif /* ExpressionParser_hpp */

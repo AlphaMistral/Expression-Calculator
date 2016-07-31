@@ -46,15 +46,16 @@ class EquationSolver
     public :
     
     EquationSolver ();
+    ~EquationSolver ();
     EquationSolver (Expression *, ExpressionParser *, string);
-    CalculationResult *SolveByBinarySearch (double, double);
-    CalculationResult *SolveByNewton (Expression *, double);
-    CalculationResult *SolveBySecant (double, double);
+    CalculationResult SolveByBinarySearch (double, double);
+    CalculationResult SolveByNewton (Expression *, double);
+    CalculationResult SolveBySecant (double, double);
     ExpressionParser *GetParser ();
     
-    CalculationResult *SetParser (ExpressionParser *);
+    CalculationResult SetParser (ExpressionParser *);
     void SetVarName (string);
-    CalculationResult *SetExpression (Expression *);
+    CalculationResult SetExpression (Expression *);
     void SetEPS (double);
     
     static void SetMaxIterTimes (int);
