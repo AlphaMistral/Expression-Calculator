@@ -6,6 +6,9 @@
 //  Copyright © 2016年 于京平. All rights reserved.
 //
 
+#include "Matrix.hpp"
+#include "Double.hpp"
+
 #include "Calculation.hpp"
 /*
 CalculationResult :: CalculationResult ()
@@ -82,3 +85,9 @@ void CalculationResult :: OutputResult ()
     cerr << "******This is the end of the result of the indicated operation******" << endl << endl;
 }
 */
+
+
+
+
+
+

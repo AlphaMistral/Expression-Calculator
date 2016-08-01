@@ -40,3 +40,11 @@ const NumericType Matrix :: GetType () const
 {
     return NumericType :: MATRIX;
 }
+
+void Matrix :: SetValue(int r, int c, double **num)
+{
+    Matrix (r, c);
+    for (int i = 0;i < r;i++)
+        for (int j = 0;j < c;j++)
+            ele[i][j] = num[i][j];
+}

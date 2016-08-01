@@ -35,6 +35,8 @@ class Double : public Numeric
     const void *GetValue () const;
     
     const NumericType GetType () const;
+    
+    void SetValue (double);
 };
 
 #endif /* Double_hpp */

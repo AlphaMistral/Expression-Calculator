@@ -30,8 +30,8 @@ class Numeric
 {
     public :
     
-    virtual const NumericType GetType () const = 0;
+    virtual const NumericType GetType () const;
     
-    virtual const void *GetValue () const = 0;
+    virtual const void *GetValue () const;
 };
 #endif /* Numeric_hpp */

@@ -38,5 +38,6 @@ class Matrix : public Numeric
     
     const NumericType GetType () const;
     const void *GetValue () const;
+    void SetValue (int, int, double **);
 };
 #endif /* Matrix_hpp */

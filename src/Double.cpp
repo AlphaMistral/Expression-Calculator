@@ -22,3 +22,8 @@ const NumericType Double :: GetType () const
 {
     return NumericType :: DOUBLE;
 }
+
+void Double :: SetValue (double x)
+{
+    value = x;
+}
