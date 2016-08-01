@@ -48,3 +48,29 @@ void Matrix :: SetValue(int r, int c, double **num)
         for (int j = 0;j < c;j++)
             ele[i][j] = num[i][j];
 }
+
+bool Matrix :: TestAddable (const Matrix *mat) const
+{
+    if (row_num == mat->row_num && col_num == mat->col_num)
+        return true;
+    else return false;
+}
+
+bool Matrix :: TestTimable (const Matrix *mat) const
+{
+    if (col_num == mat->row_num)
+        return true;
+    else return false;
+}
+
+Matrix Matrix :: operator + (const Matrix mat) const
+{
+    Matrix ret (row_num, col_num, ele);
+    for (int i = 0;i < row_num;i++)
+        for (int j = 0;j < col_num;j++)
+            ele[i][j] += mat.ele[i][j];
+    
+    return ret;
+}
+
+

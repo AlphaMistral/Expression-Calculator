@@ -39,5 +39,12 @@ class Matrix : public Numeric
     const NumericType GetType () const;
     const void *GetValue () const;
     void SetValue (int, int, double **);
+    
+    bool TestAddable (const Matrix *) const;
+    bool TestTimable (const Matrix *) const;
+    
+    Matrix operator + (const Matrix) const;
+    Matrix operator - (const Matrix) const;
+    Matrix operator * (const Matrix) const;
 };
 #endif /* Matrix_hpp */

@@ -55,6 +55,8 @@ using namespace std;
 
 struct CalculationResult
 {
+    Numeric numeric;
+    
     double result;
     bool isValid;
     string statusInformation;
