@@ -19,9 +19,11 @@
 #include <vector>
 #include <algorithm>
 
+#include "Numeric.hpp"
+
 using namespace std;
 
-class Matrix
+class Matrix : public Numeric
 {
     private :
     
@@ -33,5 +35,8 @@ class Matrix
     Matrix ();
     Matrix (int, int);
     Matrix (int, int, double **);
+    
+    const NumericType GetType () const;
+    const void *GetValue () const;
 };
 #endif /* Matrix_hpp */

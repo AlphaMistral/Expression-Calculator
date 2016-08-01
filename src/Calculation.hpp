@@ -17,6 +17,8 @@
 #include <cmath>
 #include <vector>
 
+#include "Numeric.hpp"
+
 using namespace std;
 
 /*class CalculationResult
@@ -77,6 +79,7 @@ struct CalculationResult
         isValid = i;
         statusInformation = s;
     }
+    
     void OutputResult ()
     {
         cerr << endl << "******The Output Result for the indicated operation is as follows******" << endl;
