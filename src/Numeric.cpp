@@ -17,3 +17,8 @@ const void *Numeric :: GetValue () const
 {
     return NULL;
 }
+
+bool Numeric :: GetValidity ()
+{
+    return isValid;
+}

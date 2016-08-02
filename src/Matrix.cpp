@@ -183,6 +183,28 @@ Matrix Matrix :: operator * (const Matrix &mat) const
     return ret;
 }
 
+Matrix Matrix :: operator * (const double x) const
+{
+    Matrix *temp = new Matrix (row_num, col_num, ele);
+    for (int i = 0;i < row_num;i++)
+        for (int j = 0;j < col_num;j++)
+            temp->ele[i][j] *= x;
+    Matrix ret = *temp;
+    delete temp;
+    return ret;
+}
+
+Matrix Matrix :: operator *= (const double x) const
+{
+    for (int i = 0;i < row_num;i++)
+        for (int j = 0;j < col_num;j++)
+            ele[i][j] *= x;
+    Matrix *temp = new Matrix (row_num, col_num, ele);
+    Matrix ret = *temp;
+    delete temp;
+    return ret;
+}
+
 void Matrix :: SetTranspose ()
 {
     double **originalValue = ele;

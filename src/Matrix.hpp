@@ -48,6 +48,8 @@ class Matrix : public Numeric
     Matrix operator + (const Matrix &) const;
     Matrix operator - (const Matrix &) const;
     Matrix operator * (const Matrix &) const;
+    Matrix operator * (const double) const;
+    Matrix operator *= (const double) const;
     Matrix &operator = (Matrix &);
     
     double & operator () (const int, const int);

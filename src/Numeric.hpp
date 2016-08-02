@@ -29,10 +29,16 @@ enum class NumericType
 
 class Numeric
 {
+    private :
+    
+    bool isValid;
+    
     public :
     
     virtual const NumericType GetType () const;
     
     virtual const void *GetValue () const;
+    
+    bool GetValidity ();
 };
 #endif /* Numeric_hpp */

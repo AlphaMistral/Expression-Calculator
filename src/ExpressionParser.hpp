@@ -24,6 +24,7 @@
 
 #include "Expression.hpp"
 #include "Function.hpp"
+#include "Calculation.hpp"
 
 using namespace std;
 
