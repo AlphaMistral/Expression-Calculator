@@ -40,7 +40,7 @@ int main (int argc, char ** argv)
     {
         Matrix m(1, 2, ele);
         Matrix s = mat * mat1;
-        cout << s.GetAddress ()[0][1] << endl;
+        cout << s (0,0) << endl;
         Numeric n1 = static_cast<Numeric> (mat);
         Numeric n2 = static_cast<Numeric> (mat1);
         CalculationResult rr = n1 + n2;

@@ -50,6 +50,9 @@ class Matrix : public Numeric
     Matrix operator * (const Matrix &) const;
     Matrix &operator = (Matrix &);
     
+    double & operator () (const int, const int);
+    double operator () (const int, const int) const;
+    
     Matrix Transpose () const;
     Matrix Inverse () const;
     Matrix Inverse_Transpose () const;

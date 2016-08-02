@@ -110,6 +110,18 @@ Matrix &Matrix :: operator = (Matrix &mat)
     return *this;
 }
 
+double &Matrix :: operator () (const int row, const int col)
+{
+    return ele[row][col];
+}
+
+double Matrix :: operator () (const int row, const int col) const
+{
+    if (row >= 0 && row < row_num && col >= 0 && col < col_num)
+        return ele[row][col];
+    return 0.0;
+}
+
 Matrix Matrix :: operator + (const Matrix &mat) const
 {
     if (col_num != mat.col_num || row_num != mat.row_num)
@@ -171,4 +183,32 @@ Matrix Matrix :: operator * (const Matrix &mat) const
     return ret;
 }
 
+void Matrix :: SetTranspose ()
+{
+    double **originalValue = ele;
+    double **newValue = new double*[col_num];
+    for (int i = 0;i < col_num;i++)
+        newValue[i] = new double [row_num];
+    for (int i = 0;i < col_num;i++)
+        for (int j = 0;j < row_num;j++)
+            newValue[i][j] = originalValue[j][i];
+    for (int i = 0;i < row_num;i++)
+        delete[] ele[i];
+    delete[] ele;
+    ele = newValue;
+    std :: swap (row_num, col_num);
+}
 
+Matrix Matrix :: Transpose() const
+{
+    double **eles = new double*[col_num];
+    for (int i = 0;i < col_num;i++)
+        eles[i] = new double [row_num];
+    for (int i = 0;i < col_num;i++)
+        for (int j = 0;j < row_num;j++)
+            eles[i][j] = ele[j][i];
+    Matrix *temp = new Matrix (col_num, row_num, eles);
+    Matrix ret = *temp;
+    delete temp;
+    return ret;
+}
