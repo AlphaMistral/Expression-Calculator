@@ -6,9 +6,6 @@
 //  Copyright © 2016年 于京平. All rights reserved.
 //
 
-#include "Matrix.hpp"
-#include "Double.hpp"
-
 #include "Calculation.hpp"
 /*
 CalculationResult :: CalculationResult ()
@@ -86,10 +83,7 @@ void CalculationResult :: OutputResult ()
 }
 */
 
-
-
-
-CalculationResult operator + (const Numeric a1, const Numeric a2)
+CalculationResult operator + (const Numeric &a1, const Numeric &a2)
 {
     CalculationResult ret;
     if (a1.GetType () == a2.GetType () && a1.GetType () == NumericType :: DOUBLE)
@@ -116,7 +110,7 @@ CalculationResult operator + (const Numeric a1, const Numeric a2)
     return ret;
 }
 
-CalculationResult operator * (const Numeric a1, const Numeric a2)
+CalculationResult operator * (const Numeric &a1, const Numeric &a2)
 {
     CalculationResult ret;
     if (a1.GetType () == a2.GetType () && a1.GetType () == NumericType :: DOUBLE)
@@ -125,7 +119,16 @@ CalculationResult operator * (const Numeric a1, const Numeric a2)
     }
     else if (a1.GetType () == a2.GetType () && a1.GetType () == NumericType :: MATRIX)
     {
-        
+        const Matrix *m1 = static_cast<const Matrix *> (&a1);
+        const Matrix *m2 = static_cast<const Matrix *> (&a2);
+        if (!m1->TestTimable (m2))
+        {
+            ret.statusInformation += "The two Matrices could not be multiplied together due to wrong size matching! \n";
+        }
+        else
+        {
+            ret.numeric = *m1 * *m2;
+        }
     }
     else
     {

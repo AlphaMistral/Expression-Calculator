@@ -23,7 +23,8 @@ using namespace std;
 enum class NumericType
 {
     DOUBLE,
-    MATRIX
+    MATRIX,
+    UNSURE
 };
 
 class Numeric

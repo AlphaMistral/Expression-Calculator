@@ -7,3 +7,13 @@
 //
 
 #include "Numeric.hpp"
+
+const NumericType Numeric :: GetType () const
+{
+    return NumericType :: UNSURE;
+}
+
+const void *Numeric :: GetValue () const
+{
+    return NULL;
+}

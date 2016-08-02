@@ -21,10 +21,31 @@
 #include "../src/EquationSolver.hpp"
 #include "../src/OpenGLPlotter.hpp"
 
+#include "../src/Calculation.hpp"
+
 using namespace std;
 
 int main (int argc, char ** argv)
 {
+    double **ele = new double *[1];
+    ele[0] = new double[2];
+    ele[0][0] = ele[0][1] = 2;
+    double **ele1 = new double *[2];
+    ele1[0] = new double[1];
+    ele1[1] = new double[1];
+    ele1[0][0] = ele1[1][0] = 2;
+    Matrix mat(1, 2, ele);
+    Matrix mat1(2, 1, ele1);
+    for (int i = 0;i < 100000000;i++)
+    {
+        Matrix m(1, 2, ele);
+        Matrix s = mat * mat1;
+        cout << s.GetAddress ()[0][1] << endl;
+        Numeric n1 = static_cast<Numeric> (mat);
+        Numeric n2 = static_cast<Numeric> (mat1);
+        CalculationResult rr = n1 + n2;
+    }
+    /*
     glutInit (&argc, argv);
     cout << sqlite3_version << endl;
     cout << "Hello World!" << endl;
@@ -77,5 +98,6 @@ int main (int argc, char ** argv)
         //delete tt;
         //delete xxExpression;
     }
+    */
     return 0;
 }

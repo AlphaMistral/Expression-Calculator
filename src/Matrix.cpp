@@ -14,6 +14,26 @@ Matrix :: Matrix ()
     ele = NULL;
 }
 
+Matrix :: Matrix (const Matrix &other)
+{
+    row_num = other.row_num;
+    col_num = other.col_num;
+    ele = new double *[row_num];
+    for (int i = 0;i < row_num;i++)
+    {
+        ele[i] = new double[col_num];
+        for (int j = 0;j < col_num;j++)
+            ele[i][j] = other.ele[i][j];
+    }
+}
+
+Matrix :: ~Matrix ()
+{
+    for (int i = 0;i < row_num;i++)
+        delete[] ele[i];
+    delete[] ele;
+}
+
 Matrix :: Matrix (int r, int c)
 {
     row_num = r;
@@ -25,7 +45,13 @@ Matrix :: Matrix (int r, int c)
 
 Matrix :: Matrix (int r, int c, double **num)
 {
-    Matrix (r, c);
+    row_num = r;
+    col_num = c;
+    if (num == NULL)
+        return;
+    ele = new double *[r];
+    for (int i = 0;i < r;i++)
+        ele[i] = new double[c];
     for (int i = 0;i < r;i++)
         for (int j = 0;j < c;j++)
             ele[i][j] = num[i][j];
@@ -63,13 +89,85 @@ bool Matrix :: TestTimable (const Matrix *mat) const
     else return false;
 }
 
-Matrix Matrix :: operator + (const Matrix mat) const
+Matrix &Matrix :: operator = (Matrix &mat)
 {
-    Matrix ret (row_num, col_num, ele);
+    if (this == &mat)
+    {
+        return *this;
+    }
+    for (int i = 0;i < row_num;i++)
+        delete[] ele[i];
+    delete[] ele;
+    row_num = mat.row_num;
+    col_num = mat.col_num;
+    ele = new double*[row_num];
+    for (int i = 0;i < row_num;i++)
+    {
+        ele[i] = new double[col_num];
+        for (int j = 0;j < col_num;j++)
+            ele[i][j] = mat.ele[i][j];
+    }
+    return *this;
+}
+
+Matrix Matrix :: operator + (const Matrix &mat) const
+{
+    if (col_num != mat.col_num || row_num != mat.row_num)
+    {
+        Matrix *t = new Matrix (-1, -1, NULL);
+        return *t;
+    }
+    Matrix *temp = new Matrix (row_num, col_num, ele);
     for (int i = 0;i < row_num;i++)
         for (int j = 0;j < col_num;j++)
-            ele[i][j] += mat.ele[i][j];
-    
+            temp->ele[i][j] += mat.ele[i][j];
+    Matrix ret = *temp;
+    delete temp;
+    return ret;
+}
+
+Matrix Matrix :: operator - (const Matrix &mat) const
+{
+    if (col_num != mat.col_num || row_num != mat.row_num)
+    {
+        return Matrix (-1, -1, NULL);
+    }
+    Matrix *temp = new Matrix (row_num, col_num, ele);
+    for (int i = 0;i < row_num;i++)
+        for (int j = 0;j < col_num;j++)
+            ele[i][j] -= mat.ele[i][j];
+    Matrix ret = *temp;
+    delete temp;
+    return ret;
+}
+
+Matrix Matrix :: operator * (const Matrix &mat) const
+{
+    if (col_num != mat.row_num)
+    {
+        return Matrix (-1, -1, NULL);
+    }
+    double **eles = new double *[row_num];
+    for (int i = 0;i < row_num;i++)
+    {
+        eles[i] = new double [mat.col_num];
+        for (int j = 0;j < mat.col_num;j++)
+            eles[i][j] = 0;
+    }
+    Matrix ret (row_num, mat.col_num, eles);
+    for (int i = 0;i < row_num;i++)
+    {
+        for (int j = 0;j < mat.col_num;j++)
+        {
+            for (int k = 0;k < col_num;k++)
+            {
+                ret.ele[i][j] += ele[i][k] * mat.ele[k][j];
+            }
+        }
+    }
+    for (int i = 0;i < row_num;i++)
+        delete[] eles[i];
+    delete [] eles;
     return ret;
 }
 

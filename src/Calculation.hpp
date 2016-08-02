@@ -18,6 +18,8 @@
 #include <vector>
 
 #include "Numeric.hpp"
+#include "Matrix.hpp"
+#include "Double.hpp"
 
 using namespace std;
 
@@ -94,4 +96,7 @@ struct CalculationResult
     }
 };
 
+
+CalculationResult operator + (const Numeric &a1, const Numeric &a2);
+CalculationResult operator * (const Numeric &a1, const Numeric &a2);
 #endif /* Calculation_hpp */

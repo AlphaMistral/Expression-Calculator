@@ -33,8 +33,10 @@ class Matrix : public Numeric
     public :
     
     Matrix ();
+    ~Matrix ();
     Matrix (int, int);
     Matrix (int, int, double **);
+    Matrix (const Matrix &other);
     
     const NumericType GetType () const;
     const void *GetValue () const;
@@ -43,8 +45,36 @@ class Matrix : public Numeric
     bool TestAddable (const Matrix *) const;
     bool TestTimable (const Matrix *) const;
     
-    Matrix operator + (const Matrix) const;
-    Matrix operator - (const Matrix) const;
-    Matrix operator * (const Matrix) const;
+    Matrix operator + (const Matrix &) const;
+    Matrix operator - (const Matrix &) const;
+    Matrix operator * (const Matrix &) const;
+    Matrix &operator = (Matrix &);
+    
+    Matrix Transpose () const;
+    Matrix Inverse () const;
+    Matrix Inverse_Transpose () const;
+    
+    void SetTranspose ();
+    void SetInverse ();
+    void SetInverse_Transpose ();
+    
+    const int GetRowNum () const
+    {
+        return row_num;
+    }
+    
+    friend void swap (Matrix &first, Matrix &second)
+    {
+        using std :: swap;
+        Matrix t(second);
+        swap (first.row_num, t.row_num);
+        swap (first.col_num, t.col_num);
+        swap (first.ele, t.ele);
+    }
+    
+    const double **GetAddress ()
+    {
+        return (const double **)ele;
+    }
 };
 #endif /* Matrix_hpp */
