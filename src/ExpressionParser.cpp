@@ -703,3 +703,4 @@ vector <Function *> ExpressionParser :: GetFunctionList ()
 {
     return funcs;
 }
+
