@@ -30,9 +30,10 @@ class Double : public Numeric
     
     public :
     
+    Double ();
     Double (double);
     
-    const void *GetValue () const;
+    const double GetValue ();
     
     const NumericType GetType () const;
     

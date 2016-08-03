@@ -8,14 +8,20 @@
 
 #include "Double.hpp"
 
+Double :: Double ()
+{
+    type = NumericType :: DOUBLE;
+}
+
 Double :: Double (double x)
 {
+    type = NumericType :: DOUBLE;
     value = x;
 }
 
-const void *Double :: GetValue () const
+const double Double :: GetValue ()
 {
-    return &value;
+    return value;
 }
 
 const NumericType Double :: GetType () const

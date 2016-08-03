@@ -29,13 +29,14 @@ enum class NumericType
 
 class Numeric
 {
-    private :
+    protected :
     
     bool isValid;
+    NumericType type;
     
     public :
     
-    virtual const NumericType GetType () const;
+    const NumericType GetType () const;
     
     virtual const void *GetValue () const;
     

@@ -12,10 +12,12 @@ Matrix :: Matrix ()
 {
     row_num = col_num = 0;
     ele = NULL;
+    type = NumericType :: MATRIX;
 }
 
 Matrix :: Matrix (const Matrix &other)
 {
+    type = NumericType :: MATRIX;
     row_num = other.row_num;
     col_num = other.col_num;
     ele = new double *[row_num];
@@ -57,9 +59,9 @@ Matrix :: Matrix (int r, int c, double **num)
             ele[i][j] = num[i][j];
 }
 
-const void *Matrix :: GetValue () const
+const double **Matrix :: GetValue ()
 {
-    return ele;
+    return (const double **)ele;
 }
 
 const NumericType Matrix :: GetType () const
@@ -202,6 +204,36 @@ Matrix Matrix :: operator *= (const double x) const
     Matrix *temp = new Matrix (row_num, col_num, ele);
     Matrix ret = *temp;
     delete temp;
+    return ret;
+}
+
+Matrix Matrix :: operator *= (const Matrix &mat) const
+{
+    if (col_num != mat.row_num)
+    {
+        return Matrix (-1, -1, NULL);
+    }
+    double **eles = new double *[row_num];
+    for (int i = 0;i < row_num;i++)
+    {
+        eles[i] = new double [mat.col_num];
+        for (int j = 0;j < mat.col_num;j++)
+            eles[i][j] = 0;
+    }
+    Matrix ret (row_num, mat.col_num, eles);
+    for (int i = 0;i < row_num;i++)
+    {
+        for (int j = 0;j < mat.col_num;j++)
+        {
+            for (int k = 0;k < col_num;k++)
+            {
+                ret.ele[i][j] += ele[i][k] * mat.ele[k][j];
+            }
+        }
+    }
+    for (int i = 0;i < row_num;i++)
+        delete[] eles[i];
+    delete [] eles;
     return ret;
 }
 

@@ -39,7 +39,7 @@ class Matrix : public Numeric
     Matrix (const Matrix &other);
     
     const NumericType GetType () const;
-    const void *GetValue () const;
+    const double **GetValue ();
     void SetValue (int, int, double **);
     
     bool TestAddable (const Matrix *) const;
@@ -50,6 +50,8 @@ class Matrix : public Numeric
     Matrix operator * (const Matrix &) const;
     Matrix operator * (const double) const;
     Matrix operator *= (const double) const;
+    Matrix operator *= (const Matrix &) const;
+    
     Matrix &operator = (Matrix &);
     
     double & operator () (const int, const int);

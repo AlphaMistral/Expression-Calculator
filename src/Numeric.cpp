@@ -10,7 +10,7 @@
 
 const NumericType Numeric :: GetType () const
 {
-    return NumericType :: UNSURE;
+    return type;
 }
 
 const void *Numeric :: GetValue () const
