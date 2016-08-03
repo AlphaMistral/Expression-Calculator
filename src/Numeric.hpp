@@ -36,6 +36,8 @@ class Numeric
     
     public :
     
+    virtual ~Numeric ();
+    
     const NumericType GetType () const;
     
     virtual const void *GetValue () const;
