@@ -27,9 +27,23 @@ using namespace std;
 
 int main (int argc, char ** argv)
 {
-    Double x1 (5.0);
-    Double x2 (1.5);
-    CalculationResult res = x1 * x2;
-    cout << *(double *)res.numeric.GetValue () << endl;
+    while (true)
+    {
+        Expression *expr = new Expression ("XB (5, 2) * max (sin (5), 17 ^ x)");
+        Expression *funcExpr = new Expression ("a + b / a");
+        Function *func = new Function ("XB", 2, funcExpr);
+        shared_ptr<Numeric> xx (new Double (1.1));
+        ExpressionParser *parser = new ExpressionParser (expr);
+        parser->AddNewFunction (func);
+        parser->SetVariable("x", xx.get ());
+        CalculationResult result = parser->ParseExpression ();
+        Double dou = *static_cast <Double *> (result.numeric.get ());
+        cout << dou.GetValue () << endl;
+        delete parser;
+        delete expr;
+        delete func;
+        delete funcExpr;
+        //delete xx;
+    }
     return 0;
 }

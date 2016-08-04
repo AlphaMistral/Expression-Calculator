@@ -38,6 +38,8 @@ class Matrix : public Numeric
     Matrix (int, int, double **);
     Matrix (const Matrix &other);
     
+    virtual Numeric *Clone ();
+    
     const NumericType GetType () const;
     const double **GetValue ();
     void SetValue (int, int, double **);

@@ -57,7 +57,7 @@ void OpenGLPlotter :: Display ()
     
     for(x = -1.0f / factor;x < 1.0f / factor;x += 0.1f)
     {
-        plottingParser->SetVariable ("x", x);
+        plottingParser->SetVariable ("x", new Double (x));
         double res = plottingParser->ParseExpression ().result;
         glVertex2f (x * factor, res * factor);
     }

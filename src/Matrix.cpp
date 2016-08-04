@@ -59,6 +59,13 @@ Matrix :: Matrix (int r, int c, double **num)
             ele[i][j] = num[i][j];
 }
 
+Numeric *Matrix :: Clone ()
+{
+    Matrix *ret = new Matrix (row_num, col_num, ele);
+    ret->isValid = isValid;
+    return ret;
+}
+
 const double **Matrix :: GetValue ()
 {
     return (const double **)ele;

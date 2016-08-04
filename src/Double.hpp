@@ -31,7 +31,10 @@ class Double : public Numeric
     public :
     
     Double ();
+    ~Double ();
     Double (double);
+    
+    virtual Numeric *Clone ();
     
     const double GetValue ();
     
