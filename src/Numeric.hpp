@@ -43,5 +43,14 @@ class Numeric
     virtual const void *GetValue () const;
     
     bool GetValidity ();
+    
+    virtual Numeric *Clone ()
+    {
+        Numeric *ret = new Numeric ();
+        ret->type = type;
+        ret->isValid = isValid;
+        return ret;
+    }
 };
+
 #endif /* Numeric_hpp */

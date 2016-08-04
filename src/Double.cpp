@@ -13,10 +13,22 @@ Double :: Double ()
     type = NumericType :: DOUBLE;
 }
 
+Double :: ~Double ()
+{
+    //cout << "Double Destructed! " << endl;
+}
+
 Double :: Double (double x)
 {
     type = NumericType :: DOUBLE;
     value = x;
+}
+
+Numeric *Double :: Clone ()
+{
+    Double *ret = new Double (value);
+    ret->isValid = isValid;
+    return ret;
 }
 
 const double Double :: GetValue ()

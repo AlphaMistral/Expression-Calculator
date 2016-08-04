@@ -22,3 +22,8 @@ bool Numeric :: GetValidity ()
 {
     return isValid;
 }
+
+Numeric :: ~Numeric ()
+{
+    
+}

@@ -38,6 +38,7 @@ Matrix :: ~Matrix ()
 
 Matrix :: Matrix (int r, int c)
 {
+    type = NumericType :: MATRIX;
     row_num = r;
     col_num = c;
     ele = new double *[r];
@@ -47,6 +48,7 @@ Matrix :: Matrix (int r, int c)
 
 Matrix :: Matrix (int r, int c, double **num)
 {
+    type = NumericType :: MATRIX;
     row_num = r;
     col_num = c;
     if (num == NULL)
@@ -57,6 +59,13 @@ Matrix :: Matrix (int r, int c, double **num)
     for (int i = 0;i < r;i++)
         for (int j = 0;j < c;j++)
             ele[i][j] = num[i][j];
+}
+
+Numeric *Matrix :: Clone ()
+{
+    Matrix *ret = new Matrix (row_num, col_num, ele);
+    ret->isValid = isValid;
+    return ret;
 }
 
 const double **Matrix :: GetValue ()

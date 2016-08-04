@@ -25,7 +25,7 @@ using namespace std;
 
 struct CalculationResult
 {
-    Numeric numeric;
+    shared_ptr <Numeric> numeric;
     
     double result;
     bool isValid;
@@ -36,18 +36,25 @@ struct CalculationResult
         result = 0.0;
         isValid = false;
         statusInformation = "";
+        numeric.reset (new Numeric ());
+    }
+    
+    ~CalculationResult ()
+    {
+        //delete numeric;
     }
     
     CalculationResult (double r, bool i, string s)
     {
+        numeric.reset (new Numeric ());
         result = r;
         isValid = i;
         statusInformation = s;
     }
     
-    void SetAllParams (double r, bool i, string s)
+    void SetAllParams (Numeric *r, bool i, string s)
     {
-        result = r;
+        numeric.reset (r);
         isValid = i;
         statusInformation = s;
     }
@@ -65,15 +72,9 @@ struct CalculationResult
 };
 
 
-CalculationResult operator + (const Numeric &a1, const Numeric &a2);
-CalculationResult operator * (const Numeric &a1, const Numeric &a2);
-CalculationResult operator - (const Numeric &a1, const Numeric &a2);
-CalculationResult operator / (const Numeric &a1, const Numeric &a2);
-CalculationResult operator ^ (const Numeric &a1, const Numeric &a2);
-
-CalculationResult operator += (const Numeric &a1, const Numeric &a2);
-CalculationResult operator *= (const Numeric &a1, const Numeric &a2);
-CalculationResult operator -= (const Numeric &a1, const Numeric &a2);
-CalculationResult operator /= (const Numeric &a1, const Numeric &a2);
-CalculationResult operator ^= (const Numeric &a1, const Numeric &a2);
+CalculationResult Add (const Numeric *a1, const Numeric *a2);
+CalculationResult Mul (const Numeric *a1, const Numeric *a2);
+CalculationResult Sub (const Numeric *a1, const Numeric *a2);
+CalculationResult Div (const Numeric *a1, const Numeric *a2);
+CalculationResult Exp (const Numeric *a1, const Numeric *a2);
 #endif /* Calculation_hpp */

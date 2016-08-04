@@ -44,12 +44,17 @@ ExpressionParser :: ~ExpressionParser ()
     {
         delete *iter;
     }
+    for (vector <Numeric *> :: iterator iter = nums.begin ();iter != nums.end ();iter++)
+    {
+        delete *iter;
+    }
     funcs.clear ();
+    nums.clear ();
 }
 
-double ExpressionParser :: GetValue (int l, int r)
+Numeric *ExpressionParser :: GetValue (int l, int r)
 {
-    double ans = 0;
+    shared_ptr <Numeric> ans (new Numeric ());
     pair < int, int > operate = make_pair (INT_MAX, INT_MAX);
     int index = l;
     while (index < r)
@@ -67,7 +72,12 @@ double ExpressionParser :: GetValue (int l, int r)
     int splitPosition = operate.second;
     if (splitPosition != INT_MAX)
     {
-        ans = GetThreeItemOperationValue (op, GetValue (l, splitPosition - 1), GetValue (splitPosition + 1, r));
+        Numeric *a1 = GetValue (l, splitPosition - 1);
+        Numeric *a2 = GetValue (splitPosition + 1, r);
+        Numeric *test = GetThreeItemOperationValue (op, a1, a2);
+        ans.reset (test);
+        delete a1;
+        delete a2;
     }
     else
     {
@@ -79,7 +89,7 @@ double ExpressionParser :: GetValue (int l, int r)
                 ll++;
                 rr--;
             }
-            ans = GetValue (ll, rr);
+            ans.reset (GetValue (ll, rr));
         }
         else
         {
@@ -97,20 +107,22 @@ double ExpressionParser :: GetValue (int l, int r)
             }
             if (isFunction)
             {
-                ans = GetFuncValue (parsedExpr.substr(l, functionName_size - 1), l + functionName_size, r - 1);
+                ans.reset (GetFuncValue (parsedExpr.substr(l, functionName_size - 1), l + functionName_size, r - 1));
             }
             else
             {
-                ans = GetSingleValue (l, r);
+                Numeric *a = GetSingleValue (l, r);
+                ans.reset (a);
             }
         }
     }
-    return ans;
+    Numeric *ret = ans.get ()->Clone ();
+    return ret;
 }
 
-double ExpressionParser :: GetSingleValue (int l, int r)
+Numeric *ExpressionParser :: GetSingleValue (int l, int r)
 {
-    double ans = 0;
+    shared_ptr <Numeric> ans (new Numeric ());
     int index = l;
     double sign = ((parsedExpr[l] == '-') ? -1 : 1);
     if (sign < 0)index++;
@@ -141,76 +153,122 @@ double ExpressionParser :: GetSingleValue (int l, int r)
                 continue;
             }
         }
-        ans += integer + pow (0.1, decimalIndex) * decimal;
+        ans.reset (new Double (integer + pow (0.1, decimalIndex) * decimal));
     }
     else
     {
         string varName = parsedExpr.substr (l, r - l + 1);
         if (varName == "pi")
-            ans = acos (-1.0);
+            ans.reset (new Double (acos (-1.0)));
         else if (varName == "e")
-            ans = 2.71828;
+            ans.reset (new Double (2.71828));
         else
         {
             if (var_dic.find (varName) != var_dic.end ())
             {
-                ans = var_dic[varName];
+                ans.reset (var_dic[varName]->Clone ());
             }
         }
     }
-    return sign * ans;
+    Numeric *ret = ans.get ()->Clone ();
+    return ret;
 }
 
-double ExpressionParser :: GetFuncValue(string funcName, int l, int r)
+Numeric *ExpressionParser :: GetFuncValue(string funcName, int l, int r)
 {
-    double ans = 0;
+    shared_ptr <Numeric> ans (new Numeric ());
     int index = l;
     double sign = ((parsedExpr[index] == '-') ? -1 : 1);
     if (sign < 0)index++;
     if (funcName == "sin")
     {
-        double operatingNum = GetValue (l, r);
-        ans = sin (operatingNum);
+        Numeric *operand = GetValue (l, r);
+        if (operand->GetType () == NumericType :: DOUBLE)
+        {
+            Double dou = *static_cast<Double *> (operand);
+            ans.reset (new Double (sin (dou.GetValue ())));
+        }
+        delete operand;
     }
     else if (funcName == "cos")
     {
-        double operatingNum = GetValue (l, r);
-        ans = cos (operatingNum);
+        Numeric *operand = GetValue (l, r);
+        if (operand->GetType () == NumericType :: DOUBLE)
+        {
+            Double dou = *static_cast<Double *> (operand);
+            ans.reset (new Double (cos (dou.GetValue ())));
+        }
+        delete operand;
     }
     else if (funcName == "tan")
     {
-        double operatingNum = GetValue (l, r);
-        ans = tan (operatingNum);
+        Numeric *operand = GetValue (l, r);
+        if (operand->GetType () == NumericType :: DOUBLE)
+        {
+            Double dou = *static_cast<Double *> (operand);
+            ans.reset (new Double (tan (dou.GetValue ())));
+        }
+        delete operand;
     }
     else if (funcName == "cot")
     {
-        double operatingNum = GetValue (l, r);
-        ans = 1.0 / tan (operatingNum);
+        Numeric *operand = GetValue (l, r);
+        if (operand->GetType () == NumericType :: DOUBLE)
+        {
+            Double dou = *static_cast<Double *> (operand);
+            ans.reset (new Double (1.0 / tan (dou.GetValue ())));
+        }
+        delete operand;
     }
     else if (funcName == "arcsin")
     {
-        double operatingNum = GetValue (l, r);
-        ans = asin(operatingNum);
+        Numeric *operand = GetValue (l, r);
+        if (operand->GetType () == NumericType :: DOUBLE)
+        {
+            Double dou = *static_cast<Double *> (operand);
+            ans.reset (new Double (asin (dou.GetValue ())));
+        }
+        delete operand;
     }
     else if (funcName == "arccos")
     {
-        double operatingNum = GetValue (l, r);
-        ans = acos(operatingNum);
+        Numeric *operand = GetValue (l, r);
+        if (operand->GetType () == NumericType :: DOUBLE)
+        {
+            Double dou = *static_cast<Double *> (operand);
+            ans.reset (new Double (acos (dou.GetValue ())));
+        }
+        delete operand;
     }
     else if (funcName == "arctan")
     {
-        double operatingNum = GetValue (l, r);
-        ans = atan(operatingNum);
+        Numeric *operand = GetValue (l, r);
+        if (operand->GetType () == NumericType :: DOUBLE)
+        {
+            Double dou = *static_cast<Double *> (operand);
+            ans.reset (new Double (atan (dou.GetValue ())));
+        }
+        delete operand;
     }
     else if (funcName == "arccot")
     {
-        double operatingNum = GetValue (l, r);
-        ans = atan(1.0 / operatingNum);
+        Numeric *operand = GetValue (l, r);
+        if (operand->GetType () == NumericType :: DOUBLE)
+        {
+            Double dou = *static_cast<Double *> (operand);
+            ans.reset (new Double (atan (1.0 / dou.GetValue ())));
+        }
+        delete operand;
     }
     else if (funcName == "abs")
     {
-        double operatingNum = GetValue (l, r);
-        ans = abs (operatingNum);
+        Numeric *operand = GetValue (l, r);
+        if (operand->GetType () == NumericType :: DOUBLE)
+        {
+            Double dou = *static_cast<Double *> (operand);
+            ans.reset (new Double (abs (dou.GetValue ())));
+        }
+        delete operand;
     }
     else if (funcName == "max")
     {
@@ -218,68 +276,74 @@ double ExpressionParser :: GetFuncValue(string funcName, int l, int r)
         int l1 = (*params)[0].first, r1 = (*params)[0].second;
         int l2 = (*params)[1].first, r2 = (*params)[1].second;
         delete params;
-        return max (GetValue (l1, r1), GetValue (l2, r2));
+        shared_ptr<Double> d1 (static_cast<Double *> (GetValue (l1, r1)));
+        shared_ptr<Double> d2 (static_cast<Double *> (GetValue (l2, r2)));
+        ans.reset (new Double (max (d1.get ()->GetValue (), d2.get ()->GetValue ())));
     }
-    else ans = GetUserDefinedFuncValue (funcName, l, r);
-    return ans;
+    else
+    {
+        Numeric *ano = GetUserDefinedFuncValue (funcName, l, r);
+        ans.reset (ano);
+    }
+    Numeric *ret = ans.get ()->Clone ();
+    return ret;
 }
 
-double ExpressionParser :: GetUserDefinedFuncValue (string funcName, int l, int r)
+Numeric *ExpressionParser :: GetUserDefinedFuncValue (string funcName, int l, int r)
 {
-    double ans = 0;
     Function *function = func_dic[funcName];
     Expression *expr = function->GetExpression ();
     vector < pair < int, int > > *params = GetParameters (l, r);
-    vector < double > *values = new vector < double > ();
+    vector < Numeric * > *values = new vector < Numeric * > ();
     for (vector < pair < int, int > > :: iterator iter = params->begin (); iter != params->end ();iter++)
     {
         pair < int, int> p = *iter;
-        values->push_back(GetValue(p.first, p.second));
+        values->push_back (GetValue (p.first, p.second));
     }
     ExpressionParser *newParser = new ExpressionParser (expr);
     newParser->InitializeFunctionLib (func_dic);
     char c = 'a' - 1;
-    for (vector < double > :: iterator iter = values->begin ();iter != values->end ();iter++)
+    for (vector < Numeric * > :: iterator iter = values->begin ();iter != values->end ();iter++)
     {
-        double v = *iter;
-        newParser->SetVariable(string (1, ++c), v);
+        newParser->SetVariable (string (1, ++c), *iter);
     }
-    newParser->ParseExpression ();
-    CalculationResult tempAns = newParser->GetResult ();
-    ans = tempAns.result;
+    CalculationResult tempAns = newParser->ParseExpression ();
+    for (vector < Numeric * > :: iterator iter = values->begin ();iter != values->end ();iter++)
+    {
+        delete *iter;
+    }
     delete values;
     delete newParser;
     delete params;
-    return ans;
+    Numeric *ret = tempAns.numeric.get ()->Clone ();
+    return ret;
 }
 
-double ExpressionParser :: GetThreeItemOperationValue(int op, double l, double r)
+Numeric *ExpressionParser :: GetThreeItemOperationValue(int op, Numeric *l, Numeric *r)
 {
+    shared_ptr <Numeric> ans (new Numeric ());
     switch (op)
     {
         case ADD :
-            return l + r;
+            ans.reset (Add (l, r).numeric->Clone ());
             break;
         case SUB :
-            return l - r;
+            ans.reset (Sub (l, r).numeric->Clone ());
             break;
         case MUL :
-            return l * r;
+            ans.reset (Mul (l, r).numeric->Clone ());
             break;
         case DIV :
-            if (r == 0.0)
-            {
-                result.isValid = false;
-                result.statusInformation += string("A divide by zero Exception is caught during the calculation. \n");
-            }
-            return l / r;
+            ans.reset (Div (l, r).numeric->Clone ());
             break;
         case EXP :
-            return pow (l, r);
+            ans.reset (Exp (l, r).numeric->Clone ());
             break;
         default :
-            return 0;
+            break;
     }
+    Numeric *ret = ans.get ()->Clone ();
+    return ret;
 }
 
 int ExpressionParser :: GetChildExpressionPos (int start)
@@ -350,10 +414,12 @@ CalculationResult ExpressionParser :: ParseExpression ()
     CalculationResult checkResult = CheckExpression ();
     if (!checkResult.isValid)
     {
-        result.SetAllParams(0.0, false, "The Expression is not parsed and calculated because following error(s) is (are) detected: \n" + checkResult.statusInformation);
+        result.SetAllParams(new Numeric (), false, "The Expression is not parsed and calculated because following error(s) is (are) detected: \n" + checkResult.statusInformation);
     }
     else
+    {
         result.SetAllParams(GetValue (0, p_expr_size - 1), true, "The result is valid \n");
+    }
     return result;
 }
 
@@ -387,9 +453,30 @@ CalculationResult ExpressionParser :: GetResult ()
     return result;
 }
 
-void ExpressionParser :: SetVariable(string varName, double value)
+void ExpressionParser :: SetVariable(string varName, Numeric *value)
 {
-    var_dic[varName] = value;
+    if (var_dic.find (varName) != var_dic.end ())
+    {
+        Numeric *toFind = var_dic[varName];
+        for (vector <Numeric *> :: iterator iter = nums.begin ();iter != nums.end ();iter++)
+        {
+            if (*iter == toFind)
+            {
+                nums.erase (iter);
+                delete *iter;
+                Numeric *toInsert = value->Clone ();
+                nums.push_back(toInsert);
+                var_dic[varName] = toInsert;
+                break;
+            }
+        }
+    }
+    else
+    {
+        Numeric *toInsert = value->Clone ();
+        nums.push_back (toInsert);
+        var_dic[varName] = toInsert;
+    }
 }
 
 vector< pair < int, int > > *ExpressionParser :: GetParameters (int l, int r)
@@ -420,19 +507,19 @@ CalculationResult ExpressionParser :: AddNewFunction (Function *func)
     funcs.push_back (newFunc);
     if (func_dic.find (newFunc->GetName ()) != func_dic.end ())
     {
-        ret.SetAllParams(0.0, false, "The function has already been defined! \n");
+        ret.SetAllParams(new Numeric (), false, "The function has already been defined! \n");
     }
     else
     {
         CalculationResult function_anal = CheckFunctionValidity (newFunc);
         if (!function_anal.isValid)
         {
-            ret.SetAllParams(0.0, false, "The expression of the function has some errors: \n" + function_anal.statusInformation + "Hence the Function is not added into the parser! ");
+            ret.SetAllParams(new Numeric (), false, "The expression of the function has some errors: \n" + function_anal.statusInformation + "Hence the Function is not added into the parser! ");
         }
         else
         {
             func_dic[newFunc->GetName ()] = newFunc;
-            ret.SetAllParams(1.0, true, "The function has been inserted into the parser! \n");
+            ret.SetAllParams(new Numeric (), true, "The function has been inserted into the parser! \n");
         }
     }
     return ret;
@@ -443,7 +530,7 @@ CalculationResult ExpressionParser :: DeleteFunction (string name)
     CalculationResult ret = CalculationResult ();
     if (func_dic.find (name) == func_dic.end ())
     {
-        ret.SetAllParams(0.0, false, "The indicated function does not exist at all. \n");
+        ret.SetAllParams(new Numeric (), false, "The indicated function does not exist at all. \n");
     }
     else
     {
@@ -457,7 +544,7 @@ CalculationResult ExpressionParser :: DeleteFunction (string name)
             }
         }
         func_dic[name] = NULL;
-        ret.SetAllParams(1.0, true, "The indicated function has been removed from the parser! \n");
+        ret.SetAllParams(new Numeric (), true, "The indicated function has been removed from the parser! \n");
     }
     return ret;
 }
@@ -618,6 +705,7 @@ void ExpressionParser :: CheckSingleExpression (CalculationResult *ret, int l, i
     string str = parsedExpr.substr (l, r - l + 1);
     if (isalpha (str[0]))
     {
+        if (str == "pi" || str == "e")return;
         if (var_dic.find (str) == var_dic.end ())
         {
             ret->statusInformation += string("Variable \'" + str + "\' does not exist. \n");
@@ -692,7 +780,9 @@ CalculationResult ExpressionParser :: CheckFunctionValidity (Function *func)
     char c = 'a' - 1;
     for (int i = 0;i < varNum;i++)
     {
-        newParser->SetVariable(string (1, ++c), 1.0);
+        Numeric *temp = new Numeric ();
+        newParser->SetVariable(string (1, ++c), temp);
+        delete temp;
     }
     CalculationResult checkResult = newParser->CheckExpression ();
     delete newParser;

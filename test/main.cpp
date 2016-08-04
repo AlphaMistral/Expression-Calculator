@@ -27,9 +27,38 @@ using namespace std;
 
 int main (int argc, char ** argv)
 {
-    Double x1 (5.0);
-    Double x2 (1.5);
-    CalculationResult res = x1 * x2;
-    cout << *(double *)res.numeric.GetValue () << endl;
+    while (true)
+    {
+        break;
+        double **a = new double *[2];
+        a[1] = new double [2];
+        a[0] = new double [2];
+        a[0][0] = a[0][1] = a[1][0] = a[1][1] = 1.5;
+        Numeric *mat = new Matrix (2, 2, a);
+        Expression *expr = new Expression ("a * a");
+        ExpressionParser *parser = new ExpressionParser (expr);
+        parser->SetVariable("a", mat);
+        CalculationResult res = parser->ParseExpression ();
+        Matrix *ans = static_cast<Matrix *> (res.numeric.get ());
+        cout << ans->GetValue ()[0][0] << endl;
+        delete[] a[0];
+        delete[] a[1];
+        delete[] a;
+        delete mat;
+        delete expr;
+        delete parser;
+    }
+    while (true)
+    {
+        Expression *equation = new Expression ("x - 5");
+        ExpressionParser *parser = new ExpressionParser (equation);
+        EquationSolver *solver = new EquationSolver (equation, parser, "x");
+        CalculationResult result = solver->SolveByBinarySearch (-10, 10);
+        Double *re = static_cast <Double *> (result.numeric.get ());
+        cout <<re->GetValue () << endl;
+        delete equation;
+        delete parser;
+        delete solver;
+    }
     return 0;
 }

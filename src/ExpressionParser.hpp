@@ -49,16 +49,17 @@ class ExpressionParser
     Expression *originalExpr;
     string parsedExpr;
     int p_expr_size;
-    map < string, double > var_dic;
+    map < string, Numeric* > var_dic;
     map < string, Function * > func_dic;
     vector <Function *> funcs;
+    vector <Numeric *> nums;
     CalculationResult result;
     
-    double GetValue (int, int);
-    double GetSingleValue (int, int);
-    double GetFuncValue (string, int, int);
-    double GetThreeItemOperationValue (int, double, double);
-    double GetUserDefinedFuncValue (string, int, int);
+    Numeric *GetValue (int, int);
+    Numeric *GetSingleValue (int, int);
+    Numeric *GetFuncValue (string, int, int);
+    Numeric *GetThreeItemOperationValue (int, Numeric *, Numeric *);
+    Numeric *GetUserDefinedFuncValue (string, int, int);
     
     vector< pair < int, int > > *GetParameters (int, int);
     int GetChildExpressionPos (int);
@@ -83,7 +84,7 @@ class ExpressionParser
     CalculationResult ParseExpression (Expression *);
     CalculationResult GetResult ();
     
-    void SetVariable (string, double);
+    void SetVariable (string, Numeric *);
     void DeleteVariable (string);
     CalculationResult AddNewFunction (Function *);
     CalculationResult AddNewFunction (string, int, string);

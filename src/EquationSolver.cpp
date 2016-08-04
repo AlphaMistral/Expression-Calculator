@@ -71,34 +71,43 @@ CalculationResult EquationSolver :: SolveByBinarySearch (double l,  double r)
 {
     CalculationResult ret = CalculationResult ();
     double mid = (l + r) / 2.0;
-    parser->SetVariable (var_name, l);
-    double t1 = parser->ParseExpression ().result;
-    parser->SetVariable (var_name, r);
-    double t2 = parser->ParseExpression ().result;
+    shared_ptr <Numeric> v1 (new Double (l));
+    shared_ptr <Numeric> v2 (new Double (r));
+    shared_ptr <Numeric> v3;
+    parser->SetVariable (var_name, v1.get ());
+    double t1 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
+    parser->SetVariable (var_name, v2.get ());
+    double t2 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
     if (t1 == 0)
     {
-        ret.SetAllParams(l, true, "The left end point is the solution. \n");
+        v1.reset (new Double (l));
+        ret.SetAllParams(v1.get ()->Clone (), true, "The left end point is the solution. \n");
         return ret;
     }
     else if (t2 == 0)
     {
-        ret.SetAllParams(r, true, "The right end point is the solution. \n");
+        v2.reset (new Double (r));
+        ret.SetAllParams(v2.get ()->Clone (), true, "The right end point is the solution. \n");
         return ret;
     }
     else if (t1 * t2 > 0)
     {
-        ret.SetAllParams(0.0, false, "The indicated interval may not include a solution since the function has values of the same sign on the two end points. Please check. \n");
+        v1.reset (new Numeric ());
+        ret.SetAllParams(v1.get ()->Clone (), false, "The indicated interval may not include a solution since the function has values of the same sign on the two end points. Please check. \n");
         return ret;
     }
     while (abs (l - r) > EPS)
     {
         mid = (l + r) / 2.0;
-        parser->SetVariable (var_name, l);
-        double c1 = parser->ParseExpression ().result;
-        parser->SetVariable (var_name, mid);
-        double c2 = parser->ParseExpression ().result;
-        parser->SetVariable (var_name, r);
-        double c3 = parser->ParseExpression ().result;
+        v1.reset (new Double (l));
+        v2.reset (new Double (r));
+        v3.reset (new Double (mid));
+        parser->SetVariable (var_name, v1.get ());
+        double c1 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
+        parser->SetVariable (var_name, v3.get ());
+        double c2 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
+        parser->SetVariable (var_name, v2.get ());
+        double c3 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
         if (c1 * c2 < 0)
         {
             r = mid;
@@ -114,7 +123,8 @@ CalculationResult EquationSolver :: SolveByBinarySearch (double l,  double r)
             break;
         }
     }
-    ret.SetAllParams(mid, true, "A solution is found in the interval. However it may not be the only solution to the equation. \n");
+    v3.reset (new Double (mid));
+    ret.SetAllParams(v3.get ()->Clone (), true, "A solution is found in the interval. However it may not be the only solution to the equation. \n");
     return ret;
 }
 
@@ -125,7 +135,7 @@ CalculationResult EquationSolver :: SolveByNewton(Expression *expr, double predi
     bool isMaxIterReached = true;
     for (int iter = 0;iter < MAX_ITER_TIMES;iter++)
     {
-        parser->SetVariable (var_name, last);
+        parser->SetVariable (var_name, new Double (last));
         double current = parser->ParseExpression (expression).result;
         current /= parser->ParseExpression (expr).result;
         current = -current + last;
@@ -138,8 +148,8 @@ CalculationResult EquationSolver :: SolveByNewton(Expression *expr, double predi
         last = current;
     }
     if (isMaxIterReached)
-        ret.SetAllParams(last, true, "The answer may not be accurate because the max iteration time is reached and the itertaion is broken in the middle way. \n");
-    else ret.SetAllParams(last, true, "The answer has reached the indicated accuracy. \n");
+        ret.SetAllParams(new Double (last), true, "The answer may not be accurate because the max iteration time is reached and the itertaion is broken in the middle way. \n");
+    else ret.SetAllParams(new Double (last), true, "The answer has reached the indicated accuracy. \n");
     return ret;
 }
 
@@ -151,9 +161,9 @@ CalculationResult EquationSolver :: SolveBySecant (double p1, double p2)
     bool isMaxIterReached = true;
     for (int iter = 0;iter < MAX_ITER_TIMES;iter++)
     {
-        parser->SetVariable (var_name, last1);
+        parser->SetVariable (var_name, new Double (last1));
         double t1 = parser->ParseExpression ().result;
-        parser->SetVariable (var_name, last2);
+        parser->SetVariable (var_name, new Double (last2));
         double t2 = parser->ParseExpression ().result;
         double current = last2 - (last2 - last1) / (t2 - t1) * t2;
         if (abs (current - last2) <= EPS)
@@ -166,7 +176,7 @@ CalculationResult EquationSolver :: SolveBySecant (double p1, double p2)
         last2 = current;
     }
     if (isMaxIterReached)
-        ret.SetAllParams(last2, true, "The answer may not be accurate because the max iteration time is reached and the itertaion is broken in the middle way. \n");
-    else ret.SetAllParams(last2, true, "The answer has reached the indicated accuracy. \n");
+        ret.SetAllParams(new Double (last2), true, "The answer may not be accurate because the max iteration time is reached and the itertaion is broken in the middle way. \n");
+    else ret.SetAllParams(new Double (last2), true, "The answer has reached the indicated accuracy. \n");
     return ret;
 }
