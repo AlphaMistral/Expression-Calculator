@@ -53,12 +53,14 @@ int main (int argc, char ** argv)
         Expression *equation = new Expression ("x - 5");
         ExpressionParser *parser = new ExpressionParser (equation);
         EquationSolver *solver = new EquationSolver (equation, parser, "x");
-        CalculationResult result = solver->SolveByBinarySearch (-10, 10);
+        Expression *dEquation = new Expression ("1");
+        CalculationResult result = solver->SolveBySecant (0, 1);
         Double *re = static_cast <Double *> (result.numeric.get ());
         cout <<re->GetValue () << endl;
         delete equation;
         delete parser;
         delete solver;
+        delete dEquation;
     }
     return 0;
 }

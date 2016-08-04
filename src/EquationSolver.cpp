@@ -133,11 +133,13 @@ CalculationResult EquationSolver :: SolveByNewton(Expression *expr, double predi
     CalculationResult ret = CalculationResult ();
     double last = prediction;
     bool isMaxIterReached = true;
+    shared_ptr <Numeric> var;
     for (int iter = 0;iter < MAX_ITER_TIMES;iter++)
     {
-        parser->SetVariable (var_name, new Double (last));
-        double current = parser->ParseExpression (expression).result;
-        current /= parser->ParseExpression (expr).result;
+        var.reset (new Double (last));
+        parser->SetVariable (var_name, var.get ());
+        double current = static_cast <Double *> (parser->ParseExpression (expression).numeric.get ())->GetValue ();
+        current /= static_cast <Double *> (parser->ParseExpression (expr).numeric.get ())->GetValue ();
         current = -current + last;
         if (abs (last - current) < EPS)
         {
@@ -147,9 +149,10 @@ CalculationResult EquationSolver :: SolveByNewton(Expression *expr, double predi
         }
         last = current;
     }
+    var.reset (new Double (last));
     if (isMaxIterReached)
-        ret.SetAllParams(new Double (last), true, "The answer may not be accurate because the max iteration time is reached and the itertaion is broken in the middle way. \n");
-    else ret.SetAllParams(new Double (last), true, "The answer has reached the indicated accuracy. \n");
+        ret.SetAllParams(var.get ()->Clone (), true, "The answer may not be accurate because the max iteration time is reached and the itertaion is broken in the middle way. \n");
+    else ret.SetAllParams(var.get ()->Clone (), true, "The answer has reached the indicated accuracy. \n");
     return ret;
 }
 
@@ -158,13 +161,16 @@ CalculationResult EquationSolver :: SolveBySecant (double p1, double p2)
     CalculationResult ret = CalculationResult ();
     double last1 = p1;
     double last2 = p2;
+    shared_ptr <Numeric> var1, var2;
     bool isMaxIterReached = true;
     for (int iter = 0;iter < MAX_ITER_TIMES;iter++)
     {
-        parser->SetVariable (var_name, new Double (last1));
-        double t1 = parser->ParseExpression ().result;
-        parser->SetVariable (var_name, new Double (last2));
-        double t2 = parser->ParseExpression ().result;
+        var1.reset (new Double (last1));
+        var2.reset (new Double (last2));
+        parser->SetVariable (var_name, var1.get ());
+        double t1 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
+        parser->SetVariable (var_name, var2.get ());
+        double t2 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
         double current = last2 - (last2 - last1) / (t2 - t1) * t2;
         if (abs (current - last2) <= EPS)
         {
@@ -175,8 +181,10 @@ CalculationResult EquationSolver :: SolveBySecant (double p1, double p2)
         last1 = last2;
         last2 = current;
     }
+    var1.reset (new Double (last2));
     if (isMaxIterReached)
-        ret.SetAllParams(new Double (last2), true, "The answer may not be accurate because the max iteration time is reached and the itertaion is broken in the middle way. \n");
-    else ret.SetAllParams(new Double (last2), true, "The answer has reached the indicated accuracy. \n");
+        ret.SetAllParams(var1.get ()->Clone (), true, "The answer may not be accurate because the max iteration time is reached and the itertaion is broken in the middle way. \n");
+    else ret.SetAllParams(var2.get ()->Clone (), true, "The answer has reached the indicated accuracy. \n");
     return ret;
 }
+
