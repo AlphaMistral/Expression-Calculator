@@ -61,6 +61,39 @@ Matrix :: Matrix (int r, int c, double **num)
             ele[i][j] = num[i][j];
 }
 
+Matrix *Matrix :: Zero (int size)
+{
+    double **values = new double *[size];
+    for (int i = 0;i < size;i++)
+    {
+        values[i] = new double [size];
+        for (int j = 0;j < size;j++)
+            values[i][j] = 0;
+    }
+    Matrix *ret = new Matrix (size, size, values);
+    for (int i = 0;i < size;i++)
+        delete[] values[i];
+    delete [] values;
+    return ret;
+}
+
+Matrix *Matrix :: Unit (int size)
+{
+    double **values = new double *[size];
+    for (int i = 0;i < size;i++)
+    {
+        values[i] = new double[size];
+        for (int j = 0;j < size;j++)
+            values[i][j] = 0;
+        values[i][i] = 1;
+    }
+    Matrix *ret = new Matrix (size, size, values);
+    for (int i = 0;i < size;i++)
+        delete[] values[i];
+    delete[] values;
+    return ret;
+}
+
 Numeric *Matrix :: Clone ()
 {
     Matrix *ret = new Matrix (row_num, col_num, ele);

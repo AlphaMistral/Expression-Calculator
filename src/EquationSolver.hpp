@@ -39,6 +39,8 @@ class EquationSolver
     string var_name;
     ExpressionParser *parser;
     
+    Matrix *mat;
+    
     static int MAX_ITER_TIMES;
     
     static double EPS;
