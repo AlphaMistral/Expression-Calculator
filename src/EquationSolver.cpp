@@ -71,34 +71,43 @@ CalculationResult EquationSolver :: SolveByBinarySearch (double l,  double r)
 {
     CalculationResult ret = CalculationResult ();
     double mid = (l + r) / 2.0;
-    parser->SetVariable (var_name, new Double (l));
-    double t1 = parser->ParseExpression ().result;
-    parser->SetVariable (var_name, new Double (r));
-    double t2 = parser->ParseExpression ().result;
+    shared_ptr <Numeric> v1 (new Double (l));
+    shared_ptr <Numeric> v2 (new Double (r));
+    shared_ptr <Numeric> v3;
+    parser->SetVariable (var_name, v1.get ());
+    double t1 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
+    parser->SetVariable (var_name, v2.get ());
+    double t2 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
     if (t1 == 0)
     {
-        ret.SetAllParams(new Double (l), true, "The left end point is the solution. \n");
+        v1.reset (new Double (l));
+        ret.SetAllParams(v1.get ()->Clone (), true, "The left end point is the solution. \n");
         return ret;
     }
     else if (t2 == 0)
     {
-        ret.SetAllParams(new Double (r), true, "The right end point is the solution. \n");
+        v2.reset (new Double (r));
+        ret.SetAllParams(v2.get ()->Clone (), true, "The right end point is the solution. \n");
         return ret;
     }
     else if (t1 * t2 > 0)
     {
-        ret.SetAllParams(new Numeric (), false, "The indicated interval may not include a solution since the function has values of the same sign on the two end points. Please check. \n");
+        v1.reset (new Numeric ());
+        ret.SetAllParams(v1.get ()->Clone (), false, "The indicated interval may not include a solution since the function has values of the same sign on the two end points. Please check. \n");
         return ret;
     }
     while (abs (l - r) > EPS)
     {
         mid = (l + r) / 2.0;
-        parser->SetVariable (var_name, new Double (l));
-        double c1 = parser->ParseExpression ().result;
-        parser->SetVariable (var_name, new Double (mid));
-        double c2 = parser->ParseExpression ().result;
-        parser->SetVariable (var_name, new Double (r));
-        double c3 = parser->ParseExpression ().result;
+        v1.reset (new Double (l));
+        v2.reset (new Double (r));
+        v3.reset (new Double (mid));
+        parser->SetVariable (var_name, v1.get ());
+        double c1 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
+        parser->SetVariable (var_name, v3.get ());
+        double c2 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
+        parser->SetVariable (var_name, v2.get ());
+        double c3 = static_cast <Double *> (parser->ParseExpression ().numeric.get ())->GetValue ();
         if (c1 * c2 < 0)
         {
             r = mid;
@@ -114,7 +123,8 @@ CalculationResult EquationSolver :: SolveByBinarySearch (double l,  double r)
             break;
         }
     }
-    ret.SetAllParams(new Double (mid), true, "A solution is found in the interval. However it may not be the only solution to the equation. \n");
+    v3.reset (new Double (mid));
+    ret.SetAllParams(v3.get ()->Clone (), true, "A solution is found in the interval. However it may not be the only solution to the equation. \n");
     return ret;
 }
 

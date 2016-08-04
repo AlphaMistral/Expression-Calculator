@@ -38,6 +38,7 @@ Matrix :: ~Matrix ()
 
 Matrix :: Matrix (int r, int c)
 {
+    type = NumericType :: MATRIX;
     row_num = r;
     col_num = c;
     ele = new double *[r];
@@ -47,6 +48,7 @@ Matrix :: Matrix (int r, int c)
 
 Matrix :: Matrix (int r, int c, double **num)
 {
+    type = NumericType :: MATRIX;
     row_num = r;
     col_num = c;
     if (num == NULL)

@@ -29,21 +29,36 @@ int main (int argc, char ** argv)
 {
     while (true)
     {
-        Expression *expr = new Expression ("XB (5, 2) * max (sin (5), 17 ^ x)");
-        Expression *funcExpr = new Expression ("a + b / a");
-        Function *func = new Function ("XB", 2, funcExpr);
-        shared_ptr<Numeric> xx (new Double (1.1));
+        break;
+        double **a = new double *[2];
+        a[1] = new double [2];
+        a[0] = new double [2];
+        a[0][0] = a[0][1] = a[1][0] = a[1][1] = 1.5;
+        Numeric *mat = new Matrix (2, 2, a);
+        Expression *expr = new Expression ("a * a");
         ExpressionParser *parser = new ExpressionParser (expr);
-        parser->AddNewFunction (func);
-        parser->SetVariable("x", xx.get ());
-        CalculationResult result = parser->ParseExpression ();
-        Double dou = *static_cast <Double *> (result.numeric.get ());
-        cout << dou.GetValue () << endl;
-        delete parser;
+        parser->SetVariable("a", mat);
+        CalculationResult res = parser->ParseExpression ();
+        Matrix *ans = static_cast<Matrix *> (res.numeric.get ());
+        cout << ans->GetValue ()[0][0] << endl;
+        delete[] a[0];
+        delete[] a[1];
+        delete[] a;
+        delete mat;
         delete expr;
-        delete func;
-        delete funcExpr;
-        //delete xx;
+        delete parser;
+    }
+    while (true)
+    {
+        Expression *equation = new Expression ("x - 5");
+        ExpressionParser *parser = new ExpressionParser (equation);
+        EquationSolver *solver = new EquationSolver (equation, parser, "x");
+        CalculationResult result = solver->SolveByBinarySearch (-10, 10);
+        Double *re = static_cast <Double *> (result.numeric.get ());
+        cout <<re->GetValue () << endl;
+        delete equation;
+        delete parser;
+        delete solver;
     }
     return 0;
 }

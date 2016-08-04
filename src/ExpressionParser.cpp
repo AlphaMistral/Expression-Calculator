@@ -455,8 +455,28 @@ CalculationResult ExpressionParser :: GetResult ()
 
 void ExpressionParser :: SetVariable(string varName, Numeric *value)
 {
-    nums.push_back (value->Clone ());
-    var_dic[varName] = value;
+    if (var_dic.find (varName) != var_dic.end ())
+    {
+        Numeric *toFind = var_dic[varName];
+        for (vector <Numeric *> :: iterator iter = nums.begin ();iter != nums.end ();iter++)
+        {
+            if (*iter == toFind)
+            {
+                nums.erase (iter);
+                delete *iter;
+                Numeric *toInsert = value->Clone ();
+                nums.push_back(toInsert);
+                var_dic[varName] = toInsert;
+                break;
+            }
+        }
+    }
+    else
+    {
+        Numeric *toInsert = value->Clone ();
+        nums.push_back (toInsert);
+        var_dic[varName] = toInsert;
+    }
 }
 
 vector< pair < int, int > > *ExpressionParser :: GetParameters (int l, int r)
