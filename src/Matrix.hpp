@@ -38,6 +38,9 @@ class Matrix : public Numeric
     Matrix (int, int, double **);
     Matrix (const Matrix &other);
     
+    static Matrix *Zero (int);
+    static Matrix *Unit (int);
+    
     virtual Numeric *Clone ();
     
     const NumericType GetType () const;

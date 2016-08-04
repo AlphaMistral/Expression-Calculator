@@ -24,7 +24,8 @@ enum class NumericType
 {
     DOUBLE,
     MATRIX,
-    UNSURE
+    UNSURE,
+    ARRAY
 };
 
 class Numeric

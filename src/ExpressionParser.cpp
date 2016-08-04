@@ -321,27 +321,34 @@ Numeric *ExpressionParser :: GetUserDefinedFuncValue (string funcName, int l, in
 
 Numeric *ExpressionParser :: GetThreeItemOperationValue(int op, Numeric *l, Numeric *r)
 {
+    CalculationResult res;
     shared_ptr <Numeric> ans (new Numeric ());
     switch (op)
     {
         case ADD :
-            ans.reset (Add (l, r).numeric->Clone ());
+            res = Add (l, r);
+            ans.reset (res.numeric->Clone ());
             break;
         case SUB :
-            ans.reset (Sub (l, r).numeric->Clone ());
+            res = Sub (l, r);
+            ans.reset (res.numeric->Clone ());
             break;
         case MUL :
-            ans.reset (Mul (l, r).numeric->Clone ());
+            res = Mul (l, r);
+            ans.reset (res.numeric->Clone ());
             break;
         case DIV :
-            ans.reset (Div (l, r).numeric->Clone ());
+            res = Div (l, r);
+            ans.reset (res.numeric->Clone ());
             break;
         case EXP :
-            ans.reset (Exp (l, r).numeric->Clone ());
+            res = Exp (l, r);
+            ans.reset (res.numeric->Clone ());
             break;
         default :
             break;
     }
+    ExtractErrorMessage (res);
     Numeric *ret = ans.get ()->Clone ();
     return ret;
 }
@@ -418,7 +425,7 @@ CalculationResult ExpressionParser :: ParseExpression ()
     }
     else
     {
-        result.SetAllParams(GetValue (0, p_expr_size - 1), true, "The result is valid \n");
+        result.numeric.reset (GetValue (0, p_expr_size - 1));
     }
     return result;
 }
@@ -794,3 +801,11 @@ vector <Function *> ExpressionParser :: GetFunctionList ()
     return funcs;
 }
 
+void ExpressionParser :: ExtractErrorMessage (CalculationResult res)
+{
+    if (res.statusInformation != "")
+    {
+        result.isValid = false;
+        result.statusInformation += res.statusInformation;
+    }
+}

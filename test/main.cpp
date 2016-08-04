@@ -29,18 +29,17 @@ int main (int argc, char ** argv)
 {
     while (true)
     {
-        break;
+        //break;
         double **a = new double *[2];
         a[1] = new double [2];
         a[0] = new double [2];
         a[0][0] = a[0][1] = a[1][0] = a[1][1] = 1.5;
         Numeric *mat = new Matrix (2, 2, a);
-        Expression *expr = new Expression ("a * a");
+        Expression *expr = new Expression ("a + 1");
         ExpressionParser *parser = new ExpressionParser (expr);
         parser->SetVariable("a", mat);
         CalculationResult res = parser->ParseExpression ();
-        Matrix *ans = static_cast<Matrix *> (res.numeric.get ());
-        cout << ans->GetValue ()[0][0] << endl;
+        cout << res.statusInformation << endl;
         delete[] a[0];
         delete[] a[1];
         delete[] a;
