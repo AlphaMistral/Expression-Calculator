@@ -21,61 +21,44 @@
 #include "../src/EquationSolver.hpp"
 #include "../src/OpenGLPlotter.hpp"
 
+#include "../src/Calculation.hpp"
+
 using namespace std;
 
 int main (int argc, char ** argv)
 {
-    glutInit (&argc, argv);
-    cout << sqlite3_version << endl;
-    cout << "Hello World!" << endl;
-    Expression *y = new Expression ("5 * x + 4");
-    ExpressionParser *pp = new ExpressionParser (y);
-    OpenGLPlotter *plotter = new OpenGLPlotter (pp, make_pair (-3, 3), 0.1);
-    cout << "We are here!" << endl;
-    plotter->Plot ();
-    cout << "Hello Again!" << endl;
-    return 0;
-    for (int i = 0;i < 10000000;i++)
+    while (true)
     {
-        //break;
-        Expression *expr1 = new Expression ("fx (1.1, 88) + 19 * sin (11)");
-        Expression *expr2 = new Expression ("a * a * a");
-        Expression *expr3 = new Expression ("max (a, f (a)) + b");
-        ExpressionParser *parser = new ExpressionParser (expr1);
-        Function *f1 = new Function ("f", 1, expr2);
-        Function *f2 = new Function ("fx", 2, expr3);
-        parser->AddNewFunction (f1);
-        parser->AddNewFunction (f2);
-        cout << parser->ParseExpression().result << endl;
-        delete expr1;
-        delete expr2;
-        delete expr3;
+        break;
+        double **a = new double *[2];
+        a[1] = new double [2];
+        a[0] = new double [2];
+        a[0][0] = a[0][1] = a[1][0] = a[1][1] = 1.5;
+        Numeric *mat = new Matrix (2, 2, a);
+        Expression *expr = new Expression ("a * a");
+        ExpressionParser *parser = new ExpressionParser (expr);
+        parser->SetVariable("a", mat);
+        CalculationResult res = parser->ParseExpression ();
+        Matrix *ans = static_cast<Matrix *> (res.numeric.get ());
+        cout << ans->GetValue ()[0][0] << endl;
+        delete[] a[0];
+        delete[] a[1];
+        delete[] a;
+        delete mat;
+        delete expr;
         delete parser;
-        delete f1;
-        delete f2;
     }
-    for (int i = 0;i < 10000000;i++)
+    while (true)
     {
-        Expression *xExpression = new Expression ("x + sin (17 * x + 4)");
-        ExpressionParser *xParser = new ExpressionParser (xExpression);
-        EquationSolver *solver = new EquationSolver (xExpression, xParser, "x");
-        CalculationResult xRes = solver->SolveByBinarySearch (-200, 200);
-        cout << xRes.result << endl;
-        //Expression *xxExpression = new Expression ("1 + 17 * cos (17 * x + 4)");
-        //CalculationResult *nRes = solver->SolveByNewton (xxExpression, 0.8);
-        //cout << nRes->GetResult () << endl;
-        //xParser->SetVariable("x", 0.126825);
-        //CalculationResult *tt = xParser->ParseExpression ();
-        //cout << tt->GetResult () << endl;
-        //CalculationResult *sRes = solver->SolveBySecant (0.8, 0.801);
-        //cout << sRes->GetResult () << endl;
-        delete xExpression;
-        delete xParser;
+        Expression *equation = new Expression ("x - 5");
+        ExpressionParser *parser = new ExpressionParser (equation);
+        EquationSolver *solver = new EquationSolver (equation, parser, "x");
+        CalculationResult result = solver->SolveByBinarySearch (-10, 10);
+        Double *re = static_cast <Double *> (result.numeric.get ());
+        cout <<re->GetValue () << endl;
+        delete equation;
+        delete parser;
         delete solver;
-        //delete nRes;
-        //delete sRes;
-        //delete tt;
-        //delete xxExpression;
     }
     return 0;
 }
