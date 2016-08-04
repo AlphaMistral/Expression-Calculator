@@ -97,5 +97,7 @@ class ExpressionParser
     vector <Function *> GetFunctionList ();
     
     CalculationResult SetToNewExpression (Expression *expr);
+    
+    void ExtractErrorMessage (CalculationResult);
 };
 #endif /* ExpressionParser_hpp */
