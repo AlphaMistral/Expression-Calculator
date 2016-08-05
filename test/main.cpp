@@ -29,7 +29,7 @@ int main (int argc, char ** argv)
 {
     while (true)
     {
-        //break;
+        break;
         double **a = new double *[2];
         a[1] = new double [2];
         a[0] = new double [2];
@@ -49,6 +49,7 @@ int main (int argc, char ** argv)
     }
     while (true)
     {
+        break;
         Expression *equation = new Expression ("x - 5");
         ExpressionParser *parser = new ExpressionParser (equation);
         EquationSolver *solver = new EquationSolver (equation, parser, "x");
@@ -60,6 +61,29 @@ int main (int argc, char ** argv)
         delete parser;
         delete solver;
         delete dEquation;
+    }
+    while (true)
+    {
+        double a[4][4] = { {1, -1, 2, -1}, {2, -2, 3, -3}, {1, 1, 1, 0}, {1, -1, 4, 3} };
+        vector < double > *b = new vector < double > { -8, -20, -2, 4 };
+        double **eles = new double *[4];
+        for (int i = 0;i < 4;i++)
+            eles[i] = new double [4];
+        for (int i = 0;i < 4;i++)
+            for (int j = 0;j < 4;j++)
+                eles[i][j] = a[i][j];
+        Matrix *mat = new Matrix (4, 4, eles);
+        CalculationResult res = EquationSolver :: SolveByGauss (mat, b);
+        Array < double > *ans = static_cast < Array < double > * > (res.numeric.get ());
+        vector < double > anss = ans->GetCopy ();
+        for (int i = 0;i < anss.size ();i++)
+            cout << anss[i] << ' ';
+        cout << endl;
+        for (int i = 0;i < 4;i++)
+            delete[] eles[i];
+        delete[] eles;
+        delete mat;
+        delete b;
     }
     return 0;
 }

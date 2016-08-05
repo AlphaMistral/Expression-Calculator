@@ -308,3 +308,21 @@ Matrix Matrix :: Transpose() const
     delete temp;
     return ret;
 }
+
+void Matrix :: SwapRow (int x,int y)
+{
+    swap (ele[x], ele[y]);
+}
+
+void Matrix :: AddRow (int x, int y, double mul)
+{
+    for (int i = 0;i < col_num;i++)
+    {
+        ele[y][i] += ele[x][i] * mul;
+    }
+}
+
+bool Matrix :: TestEquationSolvable (Matrix *mat, vector<double> *b)
+{
+    return mat->col_num == mat->row_num && mat->col_num == b->size ();
+}

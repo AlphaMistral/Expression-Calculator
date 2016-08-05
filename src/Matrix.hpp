@@ -70,6 +70,9 @@ class Matrix : public Numeric
     void SetInverse ();
     void SetInverse_Transpose ();
     
+    void SwapRow (int, int);
+    void AddRow (int, int, double);
+    
     const int GetRowNum () const
     {
         return row_num;
@@ -88,5 +91,8 @@ class Matrix : public Numeric
     {
         return (const double **)ele;
     }
+    
+    static bool TestEquationSolvable (Matrix *, vector < double > *);
 };
+
 #endif /* Matrix_hpp */

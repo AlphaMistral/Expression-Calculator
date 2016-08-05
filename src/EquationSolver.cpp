@@ -188,3 +188,76 @@ CalculationResult EquationSolver :: SolveBySecant (double p1, double p2)
     return ret;
 }
 
+CalculationResult EquationSolver :: SolveByGauss (Matrix *mat, vector < double > *b)
+{
+    CalculationResult ret;
+    if (!Matrix :: TestEquationSolvable (mat, b))
+    {
+        ret.isValid = false;
+        ret.statusInformation += "The size of the matrix and the array don't meet the requirement of linear equation solving. \n";
+        return ret;
+    }
+    double **eles = new double *[b->size ()];
+    int size = (int)b->size ();
+    for (int i = 0;i < size;i++)
+    {
+        eles[i] = new double [size + 1];
+        for (int j = 0;j < size;j++)
+            eles[i][j] = (*mat) (i,j);
+        eles[i][size] = (*b)[i];
+    }
+    Matrix *cal = new Matrix (size, size + 1, eles);
+    for (int i = 0;i < size;i++)
+    {
+        if ((*cal)(i, i) == 0)
+        {
+            bool isFound = false;
+            for (int j = i + 1;j < size;j++)
+            {
+                if ((*cal)(j, i) != 0)
+                {
+                    cal->SwapRow (i, j);
+                    isFound = true;
+                    break;
+                }
+            }
+            if (!isFound)
+            {
+                ret.isValid = false;
+                ret.statusInformation += "The linera equation has various solutions. \n";
+                return ret;
+            }
+        }
+        double cp = (*cal)(i, i);
+        for (int j = i + 1;j < size;j++)
+        {
+            double ap = (*cal)(j, i);
+            double mul = ap / -cp;
+            cal->AddRow (i, j, mul);
+        }
+    }
+    vector < double > *answers = new vector < double > ();
+    answers->resize (size);
+    (*answers)[size - 1] = (*cal)(size - 1, size) / (*cal)(size - 1, size - 1);
+    for (int i = size - 2;i >= 0;i--)
+    {
+        double temp = (*cal)(i, size);
+        for (int j = i + 1;j < size;j++)
+            temp -= (*cal)(i, j) * (*answers)[j];
+        (*answers)[i] = temp / (*cal)(i, i);
+    }
+    for (int i = 0;i < 4;i++)
+        cout << (*answers)[i] << ' ';
+    cout << endl;
+    Array < double > *array = new Array < double > (*answers);
+    ret.isValid = true;
+    ret.numeric.reset (array);
+    for (int i = 0, size = (int)b->size ();i < size;i++)
+        delete[] eles[i];
+    delete[] eles;
+    delete cal;
+    delete answers;
+    return ret;
+}
+
+
