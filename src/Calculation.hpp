@@ -20,6 +20,7 @@
 #include "Numeric.hpp"
 #include "Matrix.hpp"
 #include "Double.hpp"
+#include "Array.hpp"
 
 using namespace std;
 

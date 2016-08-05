@@ -36,6 +36,7 @@ class Matrix : public Numeric
     ~Matrix ();
     Matrix (int, int);
     Matrix (int, int, double **);
+    Matrix (int, int, const double **);
     Matrix (const Matrix &other);
     
     static Matrix *Zero (int);
@@ -70,9 +71,22 @@ class Matrix : public Numeric
     void SetInverse ();
     void SetInverse_Transpose ();
     
+    void SwapRow (int, int);
+    void AddRow (int, int, double);
+    
     const int GetRowNum () const
     {
         return row_num;
+    }
+    
+    const int GetColNum () const
+    {
+        return col_num;
+    }
+    
+    void SetValue (int x, int y, double v)
+    {
+        ele[x][y] = v;
     }
     
     friend void swap (Matrix &first, Matrix &second)
@@ -88,5 +102,8 @@ class Matrix : public Numeric
     {
         return (const double **)ele;
     }
+    
+    static bool TestEquationSolvable (Matrix *, vector < double > *);
 };
+
 #endif /* Matrix_hpp */

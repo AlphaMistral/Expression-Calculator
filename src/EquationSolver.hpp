@@ -61,6 +61,15 @@ class EquationSolver
     void SetEPS (double);
     
     static void SetMaxIterTimes (int);
+    
+    static CalculationResult SolveByGauss (Matrix *, vector < double > *);
+    static CalculationResult SolveByDoolittle (Matrix *, vector < double > *);
+    static CalculationResult SolveByCholesky (Matrix *, vector < double > *);
+    static CalculationResult SolveByJacobi (Matrix *, vector < double > *, int);
+    static CalculationResult SolveByGaussSeidel (Matrix *, vector < double > *, int);
+    static CalculationResult SolveDiagonalMatrix (Matrix *, bool);
+    static CalculationResult SolveDiagonalMatrix (Matrix *, vector < double > *, bool);
+    static CalculationResult TestMatrixSolvable (Matrix *, vector < double > *);
 };
 
 #endif /* EquationSolver_hpp */
