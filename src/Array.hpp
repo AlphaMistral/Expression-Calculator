@@ -37,6 +37,8 @@ class Array : public Numeric
     Array (vector <T>);
     Array (int, T *);
     
+    virtual Numeric *Clone ();
+    
     T operator [] (const int);
     
     void Push (T);
@@ -123,6 +125,12 @@ template <class T>
 void Array<T> :: SetToNewArray (vector<T> *other)
 {
     array = *other;
+}
+
+template <class T>
+Numeric *Array<T> :: Clone ()
+{
+    return new Array (array);
 }
 
 #endif /* Array_hpp */

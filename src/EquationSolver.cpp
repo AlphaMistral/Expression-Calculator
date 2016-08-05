@@ -191,22 +191,11 @@ CalculationResult EquationSolver :: SolveBySecant (double p1, double p2)
 CalculationResult EquationSolver :: SolveByGauss (Matrix *mat, vector < double > *b)
 {
     CalculationResult ret;
-    if (!Matrix :: TestEquationSolvable (mat, b))
-    {
-        ret.isValid = false;
-        ret.statusInformation += "The size of the matrix and the array don't meet the requirement of linear equation solving. \n";
-        return ret;
-    }
-    double **eles = new double *[b->size ()];
+    CalculationResult test = TestMatrixSolvable (mat, b);
+    if (!test.isValid)
+        return test;
+    Matrix *cal = new Matrix (*static_cast < Matrix *> (test.numeric.get ()));
     int size = (int)b->size ();
-    for (int i = 0;i < size;i++)
-    {
-        eles[i] = new double [size + 1];
-        for (int j = 0;j < size;j++)
-            eles[i][j] = (*mat) (i,j);
-        eles[i][size] = (*b)[i];
-    }
-    Matrix *cal = new Matrix (size, size + 1, eles);
     for (int i = 0;i < size;i++)
     {
         if ((*cal)(i, i) == 0)
@@ -236,28 +225,130 @@ CalculationResult EquationSolver :: SolveByGauss (Matrix *mat, vector < double >
             cal->AddRow (i, j, mul);
         }
     }
-    vector < double > *answers = new vector < double > ();
-    answers->resize (size);
-    (*answers)[size - 1] = (*cal)(size - 1, size) / (*cal)(size - 1, size - 1);
-    for (int i = size - 2;i >= 0;i--)
-    {
-        double temp = (*cal)(i, size);
-        for (int j = i + 1;j < size;j++)
-            temp -= (*cal)(i, j) * (*answers)[j];
-        (*answers)[i] = temp / (*cal)(i, i);
-    }
-    for (int i = 0;i < 4;i++)
-        cout << (*answers)[i] << ' ';
-    cout << endl;
-    Array < double > *array = new Array < double > (*answers);
     ret.isValid = true;
-    ret.numeric.reset (array);
-    for (int i = 0, size = (int)b->size ();i < size;i++)
-        delete[] eles[i];
-    delete[] eles;
+    CalculationResult diaRet = SolveDiagonalMatrix(cal, true);
+    ret.numeric.reset (diaRet.numeric.get ()->Clone ());
     delete cal;
-    delete answers;
     return ret;
 }
 
+CalculationResult EquationSolver :: SolveDiagonalMatrix (Matrix *mat, bool isUpper)
+{
+    CalculationResult ret;
+    vector < double > tempVec;
+    vector < double > retVec;
+    int rsize = mat->GetRowNum ();
+    for (int i = 0;i < rsize;i++)
+    {
+        tempVec.push_back ((*mat)(i, rsize));
+        retVec.push_back ((*mat)(i, rsize));
+    }
+    if (isUpper)
+    {
+        for (int i = rsize - 1;i >= 0;i--)
+        {
+            retVec[i] = tempVec[i] / (*mat)(i, i);
+            for (int j = i - 1;j >= 0;j--)
+                tempVec[j] -= retVec[i] * (*mat)(j, i);
+        }
+    }
+    else
+    {
+        for (int i = 0;i < rsize;i++)
+        {
+            retVec[i] = tempVec[i] / (*mat)(i, i);
+            for (int j = i + 1;j < rsize;j++)
+                tempVec[j] -= retVec[i] * (*mat)(j, i);
+        }
+    }
+    Array < double > *array = new Array < double > (retVec);
+    ret.isValid = true;
+    ret.numeric.reset (array);
+    return ret;
+}
+
+CalculationResult EquationSolver :: SolveDiagonalMatrix (Matrix *mat, vector < double > *b, bool isUpper)
+{
+    CalculationResult ret;
+    CalculationResult test = TestMatrixSolvable (mat, b);
+    if (!test.isValid)
+        return test;
+    int rsize = mat->GetRowNum ();
+    Matrix *ano = new Matrix (rsize, rsize + 1, mat->GetValue ());
+    for (int i = 0;i < rsize;i++)
+        ano->SetValue (i, rsize, (*b)[i]);
+    CalculationResult res = SolveDiagonalMatrix(ano, isUpper);
+    ret.numeric.reset (static_cast < Matrix * >  (res.numeric.get ()->Clone ()));
+    ret.isValid = true;
+    delete ano;
+    return ret;
+}
+
+CalculationResult EquationSolver :: TestMatrixSolvable (Matrix *mat, vector < double > *b)
+{
+    CalculationResult ret;
+    if (!Matrix :: TestEquationSolvable (mat, b))
+    {
+        ret.isValid = false;
+        ret.statusInformation += "The size of the matrix and the array don't meet the requirement of linear equation solving. \n";
+        return ret;
+    }
+    double **eles = new double *[b->size ()];
+    int size = (int)b->size ();
+    for (int i = 0;i < size;i++)
+    {
+        eles[i] = new double [size + 1];
+        for (int j = 0;j < size;j++)
+            eles[i][j] = (*mat) (i, j);
+        eles[i][size] = (*b)[i];
+    }
+    Matrix *cal = new Matrix (size, size + 1, eles);
+    for (int i = 0;i < size;i++)
+        delete[] eles[i];
+    delete[] eles;
+    ret.numeric.reset (cal);
+    ret.isValid = true;
+    return ret;
+}
+
+CalculationResult EquationSolver :: SolveByCholesky (Matrix *mat, vector<double> *b)
+{
+    CalculationResult test = TestMatrixSolvable (mat, b);
+    if (!test.isValid)
+        return test;
+    int size = (int)b->size ();
+    double **eles = new double *[size];
+    for (int i = 0;i < size;i++)
+    {
+        eles[i] = new double [size];
+        for (int j = 0;j < size;j++)
+            eles[i][j] = 0;
+    }
+    eles[0][0] = sqrt ((*mat)(0, 0));
+    for (int k = 0;k < size;k++)
+    {
+        double num = 0;
+        for (int i = 0;i < k;i++)
+        {
+            num = 0;
+            for (int j = 0;j < i;j++)
+                num += eles[i][j] * eles[k][j];
+            eles[k][i] = ((*mat)(k, i) - num) / eles[i][i];
+        }
+        num = 0;
+        for (int j = 0;j < k;j++)
+            num += eles[k][j] * eles[k][j];
+        eles[k][k] = sqrt ((*mat)(k, k) - num);
+    }
+    shared_ptr < Matrix > mat1 (new Matrix (size, size, eles));
+    shared_ptr < Matrix > mat2 (new Matrix (mat1.get ()->Transpose ()));
+    CalculationResult xResult = SolveDiagonalMatrix(mat1.get (), b, false);
+    vector < double > xValues = static_cast < Array < double > * > (xResult.numeric.get ())->GetCopy ();
+    CalculationResult yResult = SolveDiagonalMatrix(mat2.get (), &xValues, true);
+    yResult.isValid = true;
+    for (int i = 0;i < size;i++)
+        delete[] eles[i];
+    delete[] eles;
+    return yResult;
+}
 

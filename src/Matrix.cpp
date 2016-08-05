@@ -61,6 +61,21 @@ Matrix :: Matrix (int r, int c, double **num)
             ele[i][j] = num[i][j];
 }
 
+Matrix :: Matrix (int r, int c, const double **num)
+{
+    type = NumericType :: MATRIX;
+    row_num = r;
+    col_num = c;
+    if (num == NULL)
+        return;
+    ele = new double *[r];
+    for (int i = 0;i < r;i++)
+        ele[i] = new double[c];
+    for (int i = 0;i < r;i++)
+        for (int j = 0;j < c;j++)
+            ele[i][j] = num[i][j];
+}
+
 Matrix *Matrix :: Zero (int size)
 {
     double **values = new double *[size];
@@ -170,7 +185,7 @@ Matrix Matrix :: operator + (const Matrix &mat) const
 {
     if (col_num != mat.col_num || row_num != mat.row_num)
     {
-        Matrix *t = new Matrix (-1, -1, NULL);
+        Matrix *t = new Matrix (-1, -1, (double **)NULL);
         return *t;
     }
     Matrix *temp = new Matrix (row_num, col_num, ele);
@@ -186,7 +201,7 @@ Matrix Matrix :: operator - (const Matrix &mat) const
 {
     if (col_num != mat.col_num || row_num != mat.row_num)
     {
-        return Matrix (-1, -1, NULL);
+        return Matrix (-1, -1, (double (**))NULL);
     }
     Matrix *temp = new Matrix (row_num, col_num, ele);
     for (int i = 0;i < row_num;i++)
@@ -201,7 +216,7 @@ Matrix Matrix :: operator * (const Matrix &mat) const
 {
     if (col_num != mat.row_num)
     {
-        return Matrix (-1, -1, NULL);
+        return Matrix (-1, -1, (double **)NULL);
     }
     double **eles = new double *[row_num];
     for (int i = 0;i < row_num;i++)
@@ -253,7 +268,7 @@ Matrix Matrix :: operator *= (const Matrix &mat) const
 {
     if (col_num != mat.row_num)
     {
-        return Matrix (-1, -1, NULL);
+        return Matrix (-1, -1, (double **)NULL);
     }
     double **eles = new double *[row_num];
     for (int i = 0;i < row_num;i++)
@@ -306,6 +321,9 @@ Matrix Matrix :: Transpose() const
     Matrix *temp = new Matrix (col_num, row_num, eles);
     Matrix ret = *temp;
     delete temp;
+    for (int i = 0;i < col_num;i++)
+        delete[] eles[i];
+    delete[] eles;
     return ret;
 }
 
