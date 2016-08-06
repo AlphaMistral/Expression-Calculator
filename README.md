@@ -29,11 +29,13 @@
 
 ####Calculating Results
 * Now that you have given an expression and defined the variables and functions, the parser is ready to work now! Simply call **parser->ParseExpression ();** and the result would be stored in the parser. In order to get the result, please call **Calculation \*result = parser->GetResult ();**. Please note that you are not getting a *double value* but rather a *Calculation Result*. There are three elements stored in a *CalculationResult*:
-> * Value : The actual result of the operation.
+> * Numeric : The actual result of the operation.
 > * IsValid : Is the operation actually valid.
 > * StatusInformation : The concise information about the operation. Whether the operations are manipulated well or some problems encountered. 
-* Here you may simply call **double numericalResult = result->GetValue ();**. 
+* Since now the Expression Calculator must store **Double**, **Matrix** and **Array** as its result, all these value types inherit from a class called as **Numeric**. Meanwhile in order to make sure that memory leak is avoided, numeric is stored in a **shared_ptr**. Hence, in order to get the result, you may simply code like this: **Numeric \*res = parser->ParseExpression ().numeric.get ();**
+* After that, you can cast your **Numeric \*** to other types by using **staic_cast** or **dynamic_cast** depending on the situation. If you are not sure what exactly is stored in the result, you may use **res->GetType () == NumericType :: (COMPARE_TYPE)** to check. Once you are pretty sure about what is stored, **static_cast** is encouraged to use since it is approximately three times faster than **dynamic_cast**.
 
 ##Releasing Notes
 ======
-* I have to commit that currently the project is **A PILE OF SHIT**. It works, and works ONLY. I am working on the re-construct the essential codes to make it stronger and more stable. 
+* Now the expression calculator and the numerical analyzer is pretty functional. However the document is still ongoing. I will continue on documenting to make sure that all the users could get the first-hand doc at any time for use. 
+* GL & HF!
