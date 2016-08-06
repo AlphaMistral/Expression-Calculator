@@ -394,3 +394,88 @@ CalculationResult EquationSolver :: SolveByDoolittle(Matrix *mat, vector < doubl
     ret.isValid = true;
     return ret;
 }
+
+double EquationSolver :: GetDifference(vector < double > *vec1, vector < double > *vec2)
+{
+    double ret = 0;
+    for (int i = 0, imax = (int)vec1->size ();i < imax;i++)
+    {
+        ret += abs ((*vec1)[i] - (*vec2)[i]);
+    }
+    return ret;
+}
+
+CalculationResult EquationSolver :: SolveByJacobi(Matrix *mat, vector < double > * b, int maxIterTime = MAX_ITER_TIMES)
+{
+    CalculationResult ret;
+    CalculationResult test = TestMatrixSolvable (mat, b);
+    if (!test.isValid)
+        return test;
+    vector < double > vec1, vec2, *cur, *pre;
+    cur = &vec1;
+    pre = &vec2;
+    int size = (int)b->size ();
+    for (int i = 0;i < size;i++)
+    {
+        pre->push_back (0);
+        cur->push_back (0x3f3f3f3f);
+    }
+    int iterTime = 0;
+    while (iterTime < maxIterTime && GetDifference (cur, pre) > EPS)
+    {
+        iterTime++;
+        for (int i = 0;i < size;i++)
+        {
+            double num = 0;
+            for (int j = 0;j < size;j++)
+            {
+                if (i == j)
+                    continue;
+                num += (*mat)(i, j) * (*pre)[j];
+            }
+            (*cur)[i] = ((*b)[i] - num) / (*mat)(i, i);
+        }
+        swap (cur, pre);
+    }
+    Array < double > *array = new Array < double > (*cur);
+    ret.isValid = true;
+    ret.numeric.reset (array);
+    return ret;
+}
+
+CalculationResult EquationSolver :: SolveByGaussSeidel (Matrix *mat, vector < double > *b, int maxIterTime = MAX_ITER_TIMES)
+{
+    CalculationResult ret;
+    CalculationResult test = TestMatrixSolvable (mat, b);
+    if (!test.isValid)
+        return test;
+    vector < double > vec1, vec2, *cur, *pre;
+    cur = &vec1;
+    pre = &vec2;
+    int size = (int)b->size ();
+    for (int i = 0;i < size;i++)
+    {
+        pre->push_back (0);
+        cur->push_back (0);
+    }
+    int iterTime = 0;
+    while (iterTime == 0 || (iterTime < maxIterTime && GetDifference (cur, pre) > EPS))
+    {
+        iterTime++;
+        for (int i = 0;i < size;i++)
+        {
+            double num = 0;
+            for (int j = 0;j < i;j++)
+                num += (*mat)(i, j) * (*cur)[j];
+            for (int j = i + 1;j < size;j++)
+                num += (*mat)(i, j) * (*pre)[j];
+            (*cur)[i] = ((*b)[i] - num) / (*mat)(i, i);
+        }
+        swap (cur, pre);
+    }
+    Array < double > *array = new Array < double > (*cur);
+    ret.isValid = true;
+    ret.numeric.reset (array);
+    return ret;
+}
+

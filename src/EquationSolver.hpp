@@ -46,6 +46,8 @@ class EquationSolver
     
     static double EPS;
     
+    static double GetDifference (vector < double > *, vector < double > *);
+    
     public :
     
     EquationSolver ();
