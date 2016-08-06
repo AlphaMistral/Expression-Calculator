@@ -352,3 +352,59 @@ CalculationResult EquationSolver :: SolveByCholesky (Matrix *mat, vector<double>
     return yResult;
 }
 
+CalculationResult EquationSolver :: SolveByDoolittle(Matrix *mat, vector < double > *b)
+{
+    CalculationResult ret;
+    CalculationResult test = TestMatrixSolvable (mat, b);
+    if (!test.isValid)
+        return test;
+    int size = (int)b->size ();
+    double **ele1 = new double *[size];
+    double **ele2 = new double *[size];
+    for (int i = 0;i < size;i++)
+    {
+        ele1[i] = new double [size];
+        ele2[i] = new double [size];
+    }
+    for (int i = 0;i < size;i++)
+        ele1[i][i] = 1;
+    for (int i = 0;i < size;i++)
+        ele2[0][i] = (*mat)(0, i);
+    for (int i = 1;i < size;i++)
+        ele1[i][0] = (*mat)(i, 0) / (*mat)(0, 0);
+    for (int i = 1;i < size;i++)
+    {
+        for (int j = i;j < size;j++)
+        {
+            double num = (*mat)(i, j);
+            for (int k = 0;k < i;k++)
+                num -= ele1[i][k] * ele2[k][j];
+            ele2[i][j] = num;
+        }
+        for (int j = i + 1;j < size;j++)
+        {
+            double num = (*mat)(j, i);
+            for (int k = 0; k< i;k++)
+                num -= ele1[j][k] * ele2[k][i];
+            ele1[j][i] = num / ele2[i][i];
+        }
+    }
+    Matrix *lu = new Matrix (size, size, ele1);
+    for (int i = 0;i < size;i++)
+        lu->SetValue(i, i, 1);
+    vector < double > y = (static_cast < Array < double > * > (SolveDiagonalMatrix(lu, b, false).numeric.get ()))->GetCopy ();
+    delete lu;
+    lu = new Matrix (size, size, ele2);
+    y = (static_cast< Array < double > * > (SolveDiagonalMatrix (lu, &y, true).numeric.get ()))->GetCopy ();
+    delete lu;
+    for (int i = 0;i < size;i++)
+    {
+        delete[] ele1[i];
+        delete[] ele2[i];
+    }
+    delete[] ele1;
+    delete[] ele2;
+    ret.numeric.reset (new Array < double > (y));
+    ret.isValid = true;
+    return ret;
+}
