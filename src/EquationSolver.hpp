@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "ExpressionParser.hpp"
+#include "Macros.h"
 
 using namespace std;
 

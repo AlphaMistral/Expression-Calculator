@@ -20,6 +20,7 @@
 #include <algorithm>
 
 #include "Numeric.hpp"
+#include "Macros.h"
 
 using namespace std;
 

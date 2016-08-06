@@ -293,8 +293,8 @@ CalculationResult EquationSolver :: TestMatrixSolvable (Matrix *mat, vector < do
         ret.statusInformation += "The size of the matrix and the array don't meet the requirement of linear equation solving. \n";
         return ret;
     }
-    double **eles = new double *[b->size ()];
     int size = (int)b->size ();
+    double **eles = new double *[size];
     for (int i = 0;i < size;i++)
     {
         eles[i] = new double [size + 1];
@@ -303,9 +303,7 @@ CalculationResult EquationSolver :: TestMatrixSolvable (Matrix *mat, vector < do
         eles[i][size] = (*b)[i];
     }
     Matrix *cal = new Matrix (size, size + 1, eles);
-    for (int i = 0;i < size;i++)
-        delete[] eles[i];
-    delete[] eles;
+    DELETE_ARRAY(size, eles);
     ret.numeric.reset (cal);
     ret.isValid = true;
     return ret;
@@ -346,9 +344,7 @@ CalculationResult EquationSolver :: SolveByCholesky (Matrix *mat, vector<double>
     vector < double > xValues = static_cast < Array < double > * > (xResult.numeric.get ())->GetCopy ();
     CalculationResult yResult = SolveDiagonalMatrix(mat2.get (), &xValues, true);
     yResult.isValid = true;
-    for (int i = 0;i < size;i++)
-        delete[] eles[i];
-    delete[] eles;
+    DELETE_ARRAY(size, eles);
     return yResult;
 }
 
@@ -359,13 +355,8 @@ CalculationResult EquationSolver :: SolveByDoolittle(Matrix *mat, vector < doubl
     if (!test.isValid)
         return test;
     int size = (int)b->size ();
-    double **ele1 = new double *[size];
-    double **ele2 = new double *[size];
-    for (int i = 0;i < size;i++)
-    {
-        ele1[i] = new double [size];
-        ele2[i] = new double [size];
-    }
+    CREATE_ARRAY(size, size, double, ele1);
+    CREATE_ARRAY(size, size, double, ele2);
     for (int i = 0;i < size;i++)
         ele1[i][i] = 1;
     for (int i = 0;i < size;i++)
@@ -397,13 +388,8 @@ CalculationResult EquationSolver :: SolveByDoolittle(Matrix *mat, vector < doubl
     lu = new Matrix (size, size, ele2);
     y = (static_cast< Array < double > * > (SolveDiagonalMatrix (lu, &y, true).numeric.get ()))->GetCopy ();
     delete lu;
-    for (int i = 0;i < size;i++)
-    {
-        delete[] ele1[i];
-        delete[] ele2[i];
-    }
-    delete[] ele1;
-    delete[] ele2;
+    DELETE_ARRAY(size, ele1);
+    DELETE_ARRAY(size, ele2);
     ret.numeric.reset (new Array < double > (y));
     ret.isValid = true;
     return ret;

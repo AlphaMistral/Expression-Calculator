@@ -86,9 +86,7 @@ Matrix *Matrix :: Zero (int size)
             values[i][j] = 0;
     }
     Matrix *ret = new Matrix (size, size, values);
-    for (int i = 0;i < size;i++)
-        delete[] values[i];
-    delete [] values;
+    DELETE_ARRAY (size, values);
     return ret;
 }
 
@@ -103,9 +101,7 @@ Matrix *Matrix :: Unit (int size)
         values[i][i] = 1;
     }
     Matrix *ret = new Matrix (size, size, values);
-    for (int i = 0;i < size;i++)
-        delete[] values[i];
-    delete[] values;
+    DELETE_ARRAY (size, values);
     return ret;
 }
 
@@ -236,9 +232,7 @@ Matrix Matrix :: operator * (const Matrix &mat) const
             }
         }
     }
-    for (int i = 0;i < row_num;i++)
-        delete[] eles[i];
-    delete [] eles;
+    DELETE_ARRAY (row_num, eles);
     return ret;
 }
 
@@ -288,42 +282,32 @@ Matrix Matrix :: operator *= (const Matrix &mat) const
             }
         }
     }
-    for (int i = 0;i < row_num;i++)
-        delete[] eles[i];
-    delete [] eles;
+    DELETE_ARRAY (row_num, eles);
     return ret;
 }
 
 void Matrix :: SetTranspose ()
 {
     double **originalValue = ele;
-    double **newValue = new double*[col_num];
-    for (int i = 0;i < col_num;i++)
-        newValue[i] = new double [row_num];
+    CREATE_ARRAY (col_num, row_num, double, newValue);
     for (int i = 0;i < col_num;i++)
         for (int j = 0;j < row_num;j++)
             newValue[i][j] = originalValue[j][i];
-    for (int i = 0;i < row_num;i++)
-        delete[] ele[i];
-    delete[] ele;
+    DELETE_ARRAY (row_num, ele);
     ele = newValue;
     std :: swap (row_num, col_num);
 }
 
 Matrix Matrix :: Transpose() const
 {
-    double **eles = new double*[col_num];
-    for (int i = 0;i < col_num;i++)
-        eles[i] = new double [row_num];
+    CREATE_ARRAY(col_num, row_num, double, eles);
     for (int i = 0;i < col_num;i++)
         for (int j = 0;j < row_num;j++)
             eles[i][j] = ele[j][i];
     Matrix *temp = new Matrix (col_num, row_num, eles);
     Matrix ret = *temp;
     delete temp;
-    for (int i = 0;i < col_num;i++)
-        delete[] eles[i];
-    delete[] eles;
+    DELETE_ARRAY (col_num, eles);
     return ret;
 }
 

@@ -23,6 +23,8 @@
 
 #include "../src/Calculation.hpp"
 
+#include "../src/Macros.h"
+
 using namespace std;
 
 int main (int argc, char ** argv)
@@ -80,9 +82,7 @@ int main (int argc, char ** argv)
         for (int i = 0;i < anss.size ();i++)
             cout << anss[i] << ' ';
         cout << endl;
-        for (int i = 0;i < 4;i++)
-            delete[] eles[i];
-        delete[] eles;
+        DELETE_ARRAY(3, eles);
         delete mat;
         delete b;
     }
@@ -104,9 +104,7 @@ int main (int argc, char ** argv)
         for (int i = 0;i < anss.size ();i++)
             cout << anss[i] << ' ';
         cout << endl;
-        for (int i = 0;i < 3;i++)
-            delete[] eles[i];
-        delete[] eles;
+        DELETE_ARRAY(3, eles);
         delete mat;
         delete b;
     }
@@ -127,9 +125,7 @@ int main (int argc, char ** argv)
         for (int i = 0;i < anss.size ();i++)
             cout << anss[i] << ' ';
         cout << endl;
-        for (int i = 0;i < 3;i++)
-            delete[] eles[i];
-        delete[] eles;
+        DELETE_ARRAY(3, eles);
         delete mat;
         delete b;
     }
