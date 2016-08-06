@@ -23,6 +23,8 @@
 
 #include "../src/Calculation.hpp"
 
+#include "../src/Macros.h"
+
 using namespace std;
 
 int main (int argc, char ** argv)
@@ -80,9 +82,7 @@ int main (int argc, char ** argv)
         for (int i = 0;i < anss.size ();i++)
             cout << anss[i] << ' ';
         cout << endl;
-        for (int i = 0;i < 4;i++)
-            delete[] eles[i];
-        delete[] eles;
+        DELETE_ARRAY(3, eles);
         delete mat;
         delete b;
     }
@@ -104,14 +104,13 @@ int main (int argc, char ** argv)
         for (int i = 0;i < anss.size ();i++)
             cout << anss[i] << ' ';
         cout << endl;
-        for (int i = 0;i < 3;i++)
-            delete[] eles[i];
-        delete[] eles;
+        DELETE_ARRAY(3, eles);
         delete mat;
         delete b;
     }
     while (true)
     {
+        break;
         double a[3][3] = { {25, 15, -5}, {15, 18, 0}, {-5, 0, 11} };
         vector < double > *b = new vector < double > { 35, 33, 6 };
         double **eles = new double *[3];
@@ -127,9 +126,50 @@ int main (int argc, char ** argv)
         for (int i = 0;i < anss.size ();i++)
             cout << anss[i] << ' ';
         cout << endl;
+        DELETE_ARRAY(3, eles);
+        delete mat;
+        delete b;
+    }
+    while (true)
+    {
+        break;
+        double a[3][3] = { {25, 15, -5}, {15, 18, 0}, {-5, 0, 11} };
+        vector < double > *b = new vector < double > { 35, 33, 6 };
+        double **eles = new double *[3];
         for (int i = 0;i < 3;i++)
-            delete[] eles[i];
-        delete[] eles;
+            eles[i] = new double [3];
+        for (int i = 0;i < 3;i++)
+            for (int j = 0;j < 3;j++)
+                eles[i][j] = a[i][j];
+        Matrix *mat = new Matrix (3, 3, eles);
+        CalculationResult res = EquationSolver :: SolveByJacobi(mat, b, 500);
+        Array < double > *ans = static_cast < Array < double > * > (res.numeric.get ());
+        vector < double > anss = ans->GetCopy ();
+        for (int i = 0;i < anss.size ();i++)
+            cout << anss[i] << ' ';
+        cout << endl;
+        DELETE_ARRAY(3, eles);
+        delete mat;
+        delete b;
+    }
+    while (true)
+    {
+        double a[3][3] = { {25, 15, -5}, {15, 18, 0}, {-5, 0, 11} };
+        vector < double > *b = new vector < double > { 35, 33, 6 };
+        double **eles = new double *[3];
+        for (int i = 0;i < 3;i++)
+            eles[i] = new double [3];
+        for (int i = 0;i < 3;i++)
+            for (int j = 0;j < 3;j++)
+                eles[i][j] = a[i][j];
+        Matrix *mat = new Matrix (3, 3, eles);
+        CalculationResult res = EquationSolver :: SolveByGaussSeidel (mat, b, 500);
+        Array < double > *ans = static_cast < Array < double > * > (res.numeric.get ());
+        vector < double > anss = ans->GetCopy ();
+        for (int i = 0;i < anss.size ();i++)
+            cout << anss[i] << ' ';
+        cout << endl;
+        DELETE_ARRAY(3, eles);
         delete mat;
         delete b;
     }

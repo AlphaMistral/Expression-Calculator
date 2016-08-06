@@ -293,8 +293,8 @@ CalculationResult EquationSolver :: TestMatrixSolvable (Matrix *mat, vector < do
         ret.statusInformation += "The size of the matrix and the array don't meet the requirement of linear equation solving. \n";
         return ret;
     }
-    double **eles = new double *[b->size ()];
     int size = (int)b->size ();
+    double **eles = new double *[size];
     for (int i = 0;i < size;i++)
     {
         eles[i] = new double [size + 1];
@@ -303,9 +303,7 @@ CalculationResult EquationSolver :: TestMatrixSolvable (Matrix *mat, vector < do
         eles[i][size] = (*b)[i];
     }
     Matrix *cal = new Matrix (size, size + 1, eles);
-    for (int i = 0;i < size;i++)
-        delete[] eles[i];
-    delete[] eles;
+    DELETE_ARRAY(size, eles);
     ret.numeric.reset (cal);
     ret.isValid = true;
     return ret;
@@ -346,9 +344,7 @@ CalculationResult EquationSolver :: SolveByCholesky (Matrix *mat, vector<double>
     vector < double > xValues = static_cast < Array < double > * > (xResult.numeric.get ())->GetCopy ();
     CalculationResult yResult = SolveDiagonalMatrix(mat2.get (), &xValues, true);
     yResult.isValid = true;
-    for (int i = 0;i < size;i++)
-        delete[] eles[i];
-    delete[] eles;
+    DELETE_ARRAY(size, eles);
     return yResult;
 }
 
@@ -359,13 +355,8 @@ CalculationResult EquationSolver :: SolveByDoolittle(Matrix *mat, vector < doubl
     if (!test.isValid)
         return test;
     int size = (int)b->size ();
-    double **ele1 = new double *[size];
-    double **ele2 = new double *[size];
-    for (int i = 0;i < size;i++)
-    {
-        ele1[i] = new double [size];
-        ele2[i] = new double [size];
-    }
+    CREATE_ARRAY(size, size, double, ele1);
+    CREATE_ARRAY(size, size, double, ele2);
     for (int i = 0;i < size;i++)
         ele1[i][i] = 1;
     for (int i = 0;i < size;i++)
@@ -397,14 +388,94 @@ CalculationResult EquationSolver :: SolveByDoolittle(Matrix *mat, vector < doubl
     lu = new Matrix (size, size, ele2);
     y = (static_cast< Array < double > * > (SolveDiagonalMatrix (lu, &y, true).numeric.get ()))->GetCopy ();
     delete lu;
-    for (int i = 0;i < size;i++)
-    {
-        delete[] ele1[i];
-        delete[] ele2[i];
-    }
-    delete[] ele1;
-    delete[] ele2;
+    DELETE_ARRAY(size, ele1);
+    DELETE_ARRAY(size, ele2);
     ret.numeric.reset (new Array < double > (y));
     ret.isValid = true;
     return ret;
 }
+
+double EquationSolver :: GetDifference(vector < double > *vec1, vector < double > *vec2)
+{
+    double ret = 0;
+    for (int i = 0, imax = (int)vec1->size ();i < imax;i++)
+    {
+        ret += abs ((*vec1)[i] - (*vec2)[i]);
+    }
+    return ret;
+}
+
+CalculationResult EquationSolver :: SolveByJacobi(Matrix *mat, vector < double > * b, int maxIterTime = MAX_ITER_TIMES)
+{
+    CalculationResult ret;
+    CalculationResult test = TestMatrixSolvable (mat, b);
+    if (!test.isValid)
+        return test;
+    vector < double > vec1, vec2, *cur, *pre;
+    cur = &vec1;
+    pre = &vec2;
+    int size = (int)b->size ();
+    for (int i = 0;i < size;i++)
+    {
+        pre->push_back (0);
+        cur->push_back (0x3f3f3f3f);
+    }
+    int iterTime = 0;
+    while (iterTime < maxIterTime && GetDifference (cur, pre) > EPS)
+    {
+        iterTime++;
+        for (int i = 0;i < size;i++)
+        {
+            double num = 0;
+            for (int j = 0;j < size;j++)
+            {
+                if (i == j)
+                    continue;
+                num += (*mat)(i, j) * (*pre)[j];
+            }
+            (*cur)[i] = ((*b)[i] - num) / (*mat)(i, i);
+        }
+        swap (cur, pre);
+    }
+    Array < double > *array = new Array < double > (*cur);
+    ret.isValid = true;
+    ret.numeric.reset (array);
+    return ret;
+}
+
+CalculationResult EquationSolver :: SolveByGaussSeidel (Matrix *mat, vector < double > *b, int maxIterTime = MAX_ITER_TIMES)
+{
+    CalculationResult ret;
+    CalculationResult test = TestMatrixSolvable (mat, b);
+    if (!test.isValid)
+        return test;
+    vector < double > vec1, vec2, *cur, *pre;
+    cur = &vec1;
+    pre = &vec2;
+    int size = (int)b->size ();
+    for (int i = 0;i < size;i++)
+    {
+        pre->push_back (0);
+        cur->push_back (0);
+    }
+    int iterTime = 0;
+    while (iterTime == 0 || (iterTime < maxIterTime && GetDifference (cur, pre) > EPS))
+    {
+        iterTime++;
+        for (int i = 0;i < size;i++)
+        {
+            double num = 0;
+            for (int j = 0;j < i;j++)
+                num += (*mat)(i, j) * (*cur)[j];
+            for (int j = i + 1;j < size;j++)
+                num += (*mat)(i, j) * (*pre)[j];
+            (*cur)[i] = ((*b)[i] - num) / (*mat)(i, i);
+        }
+        swap (cur, pre);
+    }
+    Array < double > *array = new Array < double > (*cur);
+    ret.isValid = true;
+    ret.numeric.reset (array);
+    return ret;
+}
+

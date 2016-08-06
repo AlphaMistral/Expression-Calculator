@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "ExpressionParser.hpp"
+#include "Macros.h"
 
 using namespace std;
 
@@ -44,6 +45,8 @@ class EquationSolver
     static int MAX_ITER_TIMES;
     
     static double EPS;
+    
+    static double GetDifference (vector < double > *, vector < double > *);
     
     public :
     
