@@ -88,6 +88,7 @@ int main (int argc, char ** argv)
     }
     while (true)
     {
+        break;
         double a[3][3] = { {25, 15, -5}, {15, 18, 0}, {-5, 0, 11} };
         vector < double > *b = new vector < double > { 35, 33, 6 };
         double **eles = new double *[3];
@@ -98,6 +99,29 @@ int main (int argc, char ** argv)
                 eles[i][j] = a[i][j];
         Matrix *mat = new Matrix (3, 3, eles);
         CalculationResult res = EquationSolver :: SolveByCholesky (mat, b);
+        Array < double > *ans = static_cast < Array < double > * > (res.numeric.get ());
+        vector < double > anss = ans->GetCopy ();
+        for (int i = 0;i < anss.size ();i++)
+            cout << anss[i] << ' ';
+        cout << endl;
+        for (int i = 0;i < 3;i++)
+            delete[] eles[i];
+        delete[] eles;
+        delete mat;
+        delete b;
+    }
+    while (true)
+    {
+        double a[3][3] = { {25, 15, -5}, {15, 18, 0}, {-5, 0, 11} };
+        vector < double > *b = new vector < double > { 35, 33, 6 };
+        double **eles = new double *[3];
+        for (int i = 0;i < 3;i++)
+            eles[i] = new double [3];
+        for (int i = 0;i < 3;i++)
+            for (int j = 0;j < 3;j++)
+                eles[i][j] = a[i][j];
+        Matrix *mat = new Matrix (3, 3, eles);
+        CalculationResult res = EquationSolver :: SolveByDoolittle (mat, b);
         Array < double > *ans = static_cast < Array < double > * > (res.numeric.get ());
         vector < double > anss = ans->GetCopy ();
         for (int i = 0;i < anss.size ();i++)
