@@ -64,8 +64,8 @@ double PolynomialUtility :: LagrangeInterpolation(vector < double > *xValues, ve
                 s = s * (xi - (*xValues)[j]);
                 t = t * ((*xValues)[i] - (*xValues)[j]);
             }
-            ans += (s / t) * (*yValues)[i];
         }
+        ans += (s / t) * (*yValues)[i];
     }
     return ans;
 }
@@ -86,8 +86,8 @@ double PolynomialUtility :: LagrangeInterpolation(Array < double > *xValues, Arr
                 s = s * (xi - x[i]);
                 t = t * (x[i] - x[j]);
             }
-            ans += (s / t) * y[i];
         }
+        ans += (s / t) * y[i];
     }
     return ans;
 }

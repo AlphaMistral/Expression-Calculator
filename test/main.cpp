@@ -181,8 +181,8 @@ int main (int argc, char ** argv)
         vector < double > temp = {1, 2};
         vector < double > tempY = {1, 2};
         //cout << static_cast < Double *> (pUtility->GetPolynomialResult (&temp, 3).numeric.get ())->GetValue () << endl;
-        cout << pUtility->LagrangeInterpolation (&temp, &tempY, 8) << endl;
-        cout << pUtility->NewtonInterpolation(&temp, &tempY, 8) << endl;
+        cout << pUtility->LagrangeInterpolation (&temp, &tempY, 3) << endl;
+        cout << pUtility->NewtonInterpolation (&temp, &tempY, 8) << endl;
         delete pUtility;
     }
     return 0;
