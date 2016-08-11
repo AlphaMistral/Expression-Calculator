@@ -141,3 +141,73 @@ double PolynomialUtility :: NewtonInterpolation (Array < double > *xValues, Arra
     }
     return ans;
 }
+
+Array < double > *PolynomialUtility :: PolynomialFitting(vector < double > *xValues, vector < double > *yValues, int degree)
+{
+    int N = (int)xValues->size ();
+    int n = degree;
+    vector < double > vec;
+    vec.resize (n + 1);
+    double *X = new double [2 * n + 1];
+    double *Y = new double [n + 1];
+    double **B = new double *[n + 1];
+    for (int i = 0;i <= n;i++)
+    {
+        B[i] = new double [n + 2];
+    }
+    for (int i = 0;i < 2 * n + 1;i++)
+    {
+        X[i]=0;
+        for (int j = 0;j < N;j++)
+            X[i] = X[i] + pow((*xValues)[j], i);
+    }
+    for (int i = 0;i <= n;i++)
+        for (int j = 0;j <= n;j++)
+            B[i][j] = X[i + j];
+    for (int i = 0;i < n + 1;i++)
+    {
+        Y[i]=0;
+        for (int j = 0;j < N;j++)
+            Y[i] = Y[i] + pow((*xValues)[j], i) * (*yValues)[j];
+    }
+    for (int i = 0;i <= n;i++)
+        B[i][n+1] = Y[i];
+    n++;
+    for (int i = 0;i < n;i++)
+        for (int k = i + 1;k < n;k++)
+            if (B[i][i] < B[k][i])
+                for (int j = 0;j <= n;j++)
+                {
+                    double temp = B[i][j];
+                    B[i][j] = B[k][j];
+                    B[k][j] = temp;
+                }
+    
+    for (int i = 0;i < n - 1;i++)
+        for (int k = i + 1;k < n;k++)
+        {
+            double t = B[k][i] / B[i][i];
+            for (int j = 0;j <= n;j++)
+                B[k][j] = B[k][j] - t * B[i][j];
+        }
+    for (int i = n - 1;i >= 0;i--)
+    {
+        vec[i] = B[i][n];
+        for (int j = 0;j < n;j++)
+        {
+            if (j != i)
+            {
+                vec[i] -= B[i][j] * vec[j];
+            }
+        }
+        vec[i] /= B[i][i];
+    }
+    delete[] X;
+    delete[] Y;
+    for (int i = 0;i < n;i++)
+        delete[] B[i];
+    delete[] B;
+    Array < double > *array = new Array < double > (vec);
+    return array;
+}
+
