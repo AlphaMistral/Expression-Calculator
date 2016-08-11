@@ -20,6 +20,7 @@
 #include "../src/ExpressionParser.hpp"
 #include "../src/EquationSolver.hpp"
 #include "../src/OpenGLPlotter.hpp"
+#include "../src/PolynomialUtility.hpp"
 
 #include "../src/Calculation.hpp"
 
@@ -154,6 +155,7 @@ int main (int argc, char ** argv)
     }
     while (true)
     {
+        break;
         double a[3][3] = { {25, 15, -5}, {15, 18, 0}, {-5, 0, 11} };
         vector < double > *b = new vector < double > { 35, 33, 6 };
         double **eles = new double *[3];
@@ -172,6 +174,16 @@ int main (int argc, char ** argv)
         DELETE_ARRAY(3, eles);
         delete mat;
         delete b;
+    }
+    while (true)
+    {
+        PolynomialUtility *pUtility = new PolynomialUtility ();
+        vector < double > temp = {1, 2};
+        vector < double > tempY = {1, 2};
+        //cout << static_cast < Double *> (pUtility->GetPolynomialResult (&temp, 3).numeric.get ())->GetValue () << endl;
+        cout << pUtility->LagrangeInterpolation (&temp, &tempY, 3) << endl;
+        cout << pUtility->NewtonInterpolation (&temp, &tempY, 8) << endl;
+        delete pUtility;
     }
     return 0;
 }
