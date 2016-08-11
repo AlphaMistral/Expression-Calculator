@@ -177,6 +177,7 @@ int main (int argc, char ** argv)
     }
     while (true)
     {
+        break;
         PolynomialUtility *pUtility = new PolynomialUtility ();
         vector < double > temp = {1, 2};
         vector < double > tempY = {1, 2};
@@ -184,6 +185,21 @@ int main (int argc, char ** argv)
         cout << pUtility->LagrangeInterpolation (&temp, &tempY, 3) << endl;
         cout << pUtility->NewtonInterpolation (&temp, &tempY, 8) << endl;
         delete pUtility;
+    }
+    while (true)
+    {
+        PolynomialUtility *pUtility = new PolynomialUtility ();
+        vector < double > x = {-1, 0, 1, 2};
+        vector < double > y = {-10, 1, 6, 11};
+        Array < double > *result = pUtility->PolynomialFitting (&x, &y, 3);
+        vector < double > vec = result->GetCopy ();
+        for (vector < double > :: iterator iter = vec.begin ();iter != vec.end ();iter++)
+        {
+            cout << *iter << ' ';
+        }
+        cout << endl;
+        delete pUtility;
+        delete result;
     }
     return 0;
 }
